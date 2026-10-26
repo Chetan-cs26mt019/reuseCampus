@@ -8,3 +8,5 @@ python-multipart
 pytest
 pytest-cov
 httpx
+
+Pillow>=11.0.0
