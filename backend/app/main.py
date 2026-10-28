@@ -11,6 +11,7 @@ from app.api.moderation import (
 from app.api.chatbot import router as chatbot_router
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
+from app.api.auth import router as auth_router
 
 app = FastAPI(
     title=settings.app_name,
@@ -36,6 +37,7 @@ app.include_router(reports_router)
 app.include_router(moderation_router)
 app.include_router(chatbot_router)
 app.include_router(marketplace_router)
+app.include_router(auth_router)
 
 
 @app.get("/health", tags=["Health"])
