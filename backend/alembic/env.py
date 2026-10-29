@@ -15,11 +15,14 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Use the database URL from backend/.env.
+# Respect DATABASE_URL from the environment, falling back to app settings.
 # Escaping '%' prevents ConfigParser interpolation errors.
+import os
+
+database_url = os.getenv("DATABASE_URL", settings.database_url)
 config.set_main_option(
     "sqlalchemy.url",
-    settings.database_url.replace("%", "%%"),
+    database_url.replace("%", "%%"),
 )
 
 target_metadata = Base.metadata
@@ -28,7 +31,7 @@ target_metadata = Base.metadata
 def run_migrations_offline() -> None:
     """Run migrations without opening a database connection."""
     context.configure(
-        url=settings.database_url,
+        url=database_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},

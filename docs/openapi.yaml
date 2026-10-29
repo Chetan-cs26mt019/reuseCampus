@@ -1,0 +1,1555 @@
+openapi: 3.0.3
+info:
+  title: ReUse Campus API
+  description: Backend API for the ReUse Campus student-to-student marketplace and
+    chatbot.
+  version: 0.1.0
+paths:
+  /orders:
+    get:
+      tags:
+      - Orders
+      summary: List My Reservations
+      operationId: list_my_reservations_orders_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ReservationResponse'
+                type: array
+                title: Response List My Reservations Orders Get
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - Orders
+      summary: Request Reservation
+      operationId: request_reservation_orders_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /orders/{order_id}:
+    get:
+      tags:
+      - Orders
+      summary: Get Reservation
+      operationId: get_reservation_orders__order_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Order Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Orders
+      summary: Update Reservation
+      operationId: update_reservation_orders__order_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Order Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationAction'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /enquiry-threads:
+    get:
+      tags:
+      - Enquiries
+      summary: List Enquiries Endpoint
+      operationId: list_enquiries_endpoint_enquiry_threads_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/EnquiryResponse'
+                type: array
+                title: Response List Enquiries Endpoint Enquiry Threads Get
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - Enquiries
+      summary: Create Enquiry Endpoint
+      operationId: create_enquiry_endpoint_enquiry_threads_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnquiryCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnquiryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /enquiry-threads/{enquiry_id}:
+    get:
+      tags:
+      - Enquiries
+      summary: Get Enquiry Endpoint
+      operationId: get_enquiry_endpoint_enquiry_threads__enquiry_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: enquiry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Enquiry Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnquiryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /enquiry-threads/{enquiry_id}/messages:
+    get:
+      tags:
+      - Enquiries
+      summary: List Messages Endpoint
+      operationId: list_messages_endpoint_enquiry_threads__enquiry_id__messages_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: enquiry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Enquiry Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnquiryMessageResponse'
+                title: Response List Messages Endpoint Enquiry Threads  Enquiry Id  Messages
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Enquiries
+      summary: Send Message Endpoint
+      operationId: send_message_endpoint_enquiry_threads__enquiry_id__messages_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: enquiry_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Enquiry Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnquiryMessageCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnquiryMessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /listings/{listing_id}/reports:
+    post:
+      tags:
+      - Reports
+      summary: Create Report Endpoint
+      operationId: create_report_endpoint_listings__listing_id__reports_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: listing_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Listing Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /moderation/reports:
+    get:
+      tags:
+      - Moderation
+      summary: List Reports Endpoint
+      operationId: list_reports_endpoint_moderation_reports_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ReportResponse'
+                type: array
+                title: Response List Reports Endpoint Moderation Reports Get
+      security:
+      - HTTPBearer: []
+  /moderation/reports/{report_id}:
+    patch:
+      tags:
+      - Moderation
+      summary: Review Report Endpoint
+      operationId: review_report_endpoint_moderation_reports__report_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: report_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Report Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportReview'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /chat/sessions:
+    post:
+      tags:
+      - Chatbot
+      summary: Create Chat Session
+      operationId: create_chat_session_chat_sessions_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSessionResponse'
+  /chat/sessions/{session_id}/messages:
+    post:
+      tags:
+      - Chatbot
+      summary: Send Chat Message
+      operationId: send_chat_message_chat_sessions__session_id__messages_post
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Session Id
+      - name: x-chat-token
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Chat-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessageRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /chat/sessions/{session_id}/feedback:
+    post:
+      tags:
+      - Chatbot
+      summary: Submit Chat Feedback
+      operationId: submit_chat_feedback_chat_sessions__session_id__feedback_post
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Session Id
+      - name: x-chat-token
+        in: header
+        required: true
+        schema:
+          type: string
+          title: X-Chat-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatFeedbackRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatFeedbackResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /categories:
+    get:
+      tags:
+      - Marketplace
+      summary: Get Categories
+      operationId: get_categories_categories_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CategoryResponse'
+                type: array
+                title: Response Get Categories Categories Get
+  /listings:
+    post:
+      tags:
+      - Marketplace
+      summary: Post Listing
+      operationId: post_listing_listings_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListingCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Marketplace
+      summary: Get Listings
+      operationId: get_listings_listings_get
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          title: Q
+          type: string
+          maxLength: 200
+          nullable: true
+      - name: category_id
+        in: query
+        required: false
+        schema:
+          title: Category Id
+          type: integer
+          nullable: true
+          minimum: 0
+          exclusiveMinimum: true
+      - name: min_price
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+            minimum: 0.0
+          - type: string
+          title: Min Price
+          nullable: true
+      - name: max_price
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+            minimum: 0.0
+          - type: string
+          title: Max Price
+          nullable: true
+      - name: condition
+        in: query
+        required: false
+        schema:
+          title: Condition
+          type: string
+          maxLength: 30
+          nullable: true
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListingResponse'
+                title: Response Get Listings Listings Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /listings/{listing_id}:
+    get:
+      tags:
+      - Marketplace
+      summary: Get Listing Details
+      operationId: get_listing_details_listings__listing_id__get
+      parameters:
+      - name: listing_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Listing Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Marketplace
+      summary: Patch Listing
+      operationId: patch_listing_listings__listing_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: listing_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Listing Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListingUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /listings/{listing_id}/favourite:
+    post:
+      tags:
+      - Marketplace
+      summary: Favourite Listing
+      operationId: favourite_listing_listings__listing_id__favourite_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: listing_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Listing Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Marketplace
+      summary: Unfavourite Listing
+      operationId: unfavourite_listing_listings__listing_id__favourite_delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: listing_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Listing Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /favourites:
+    get:
+      tags:
+      - Marketplace
+      summary: Get My Favourites
+      operationId: get_my_favourites_favourites_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ListingResponse'
+                type: array
+                title: Response Get My Favourites Favourites Get
+      security:
+      - HTTPBearer: []
+  /listings/{listing_id}/images:
+    post:
+      tags:
+      - Marketplace
+      summary: Upload Listing Image Endpoint
+      operationId: upload_listing_image_endpoint_listings__listing_id__images_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: listing_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Listing Id
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_upload_listing_image_endpoint_listings__listing_id__images_post'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingImageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Marketplace
+      summary: Get Listing Images Endpoint
+      operationId: get_listing_images_endpoint_listings__listing_id__images_get
+      parameters:
+      - name: listing_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Listing Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListingImageResponse'
+                title: Response Get Listing Images Endpoint Listings  Listing Id  Images
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /listings/{listing_id}/images/{image_id}:
+    delete:
+      tags:
+      - Marketplace
+      summary: Delete Listing Image Endpoint
+      operationId: delete_listing_image_endpoint_listings__listing_id__images__image_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: listing_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Listing Id
+      - name: image_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Image Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/register:
+    post:
+      tags:
+      - Authentication
+      summary: Register
+      operationId: register_auth_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/login:
+    post:
+      tags:
+      - Authentication
+      summary: Login
+      operationId: login_auth_login_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/me:
+    get:
+      tags:
+      - Authentication
+      summary: Get Me
+      operationId: get_me_auth_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+      security:
+      - HTTPBearer: []
+  /health:
+    get:
+      tags:
+      - Health
+      summary: Health Check
+      operationId: health_check_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    Body_upload_listing_image_endpoint_listings__listing_id__images_post:
+      properties:
+        file:
+          type: string
+          title: File
+          format: binary
+        alt_text:
+          title: Alt Text
+          type: string
+          maxLength: 255
+          nullable: true
+      type: object
+      required:
+      - file
+      title: Body_upload_listing_image_endpoint_listings__listing_id__images_post
+    CategoryResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        parent_category_id:
+          title: Parent Category Id
+          type: integer
+          nullable: true
+        is_active:
+          type: boolean
+          title: Is Active
+      type: object
+      required:
+      - id
+      - name
+      - parent_category_id
+      - is_active
+      title: CategoryResponse
+    ChatFeedbackRequest:
+      properties:
+        rating:
+          type: string
+          enum:
+          - helpful
+          - not_helpful
+          title: Rating
+        message_id:
+          title: Message Id
+          type: integer
+          nullable: true
+          minimum: 0.0
+          exclusiveMinimum: true
+        comments:
+          title: Comments
+          type: string
+          maxLength: 1000
+          nullable: true
+      type: object
+      required:
+      - rating
+      title: ChatFeedbackRequest
+    ChatFeedbackResponse:
+      properties:
+        feedback_id:
+          type: integer
+          title: Feedback Id
+        session_id:
+          type: integer
+          title: Session Id
+        message_id:
+          title: Message Id
+          type: integer
+          nullable: true
+        rating:
+          type: string
+          title: Rating
+        comments:
+          title: Comments
+          type: string
+          nullable: true
+      type: object
+      required:
+      - feedback_id
+      - session_id
+      - message_id
+      - rating
+      - comments
+      title: ChatFeedbackResponse
+    ChatListingResult:
+      properties:
+        listing_id:
+          type: integer
+          title: Listing Id
+        title:
+          type: string
+          title: Title
+        price:
+          type: string
+          title: Price
+        currency:
+          type: string
+          title: Currency
+        category:
+          type: string
+          title: Category
+        condition:
+          type: string
+          title: Condition
+        image_url:
+          title: Image Url
+          type: string
+          nullable: true
+      type: object
+      required:
+      - listing_id
+      - title
+      - price
+      - currency
+      - category
+      - condition
+      title: ChatListingResult
+    ChatMessageRequest:
+      properties:
+        message:
+          type: string
+          maxLength: 1000
+          minLength: 1
+          title: Message
+      type: object
+      required:
+      - message
+      title: ChatMessageRequest
+    ChatMessageResponse:
+      properties:
+        session_id:
+          type: integer
+          title: Session Id
+        message:
+          type: string
+          title: Message
+        result_count:
+          type: integer
+          title: Result Count
+        listings:
+          items:
+            $ref: '#/components/schemas/ChatListingResult'
+          type: array
+          title: Listings
+      type: object
+      required:
+      - session_id
+      - message
+      - result_count
+      - listings
+      title: ChatMessageResponse
+    ChatSessionResponse:
+      properties:
+        session_id:
+          type: integer
+          title: Session Id
+        guest_token:
+          type: string
+          title: Guest Token
+      type: object
+      required:
+      - session_id
+      - guest_token
+      title: ChatSessionResponse
+    EnquiryCreate:
+      properties:
+        listing_id:
+          type: integer
+          title: Listing Id
+          minimum: 0.0
+          exclusiveMinimum: true
+      type: object
+      required:
+      - listing_id
+      title: EnquiryCreate
+    EnquiryMessageCreate:
+      properties:
+        body:
+          type: string
+          maxLength: 2000
+          minLength: 1
+          title: Body
+      type: object
+      required:
+      - body
+      title: EnquiryMessageCreate
+    EnquiryMessageResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        enquiry_id:
+          type: integer
+          title: Enquiry Id
+        sender_id:
+          type: integer
+          title: Sender Id
+        body:
+          type: string
+          title: Body
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        read_at:
+          title: Read At
+          type: string
+          format: date-time
+          nullable: true
+      type: object
+      required:
+      - id
+      - enquiry_id
+      - sender_id
+      - body
+      - created_at
+      - read_at
+      title: EnquiryMessageResponse
+    EnquiryResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        listing_id:
+          type: integer
+          title: Listing Id
+        buyer_id:
+          type: integer
+          title: Buyer Id
+        seller_id:
+          type: integer
+          title: Seller Id
+        status:
+          type: string
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - id
+      - listing_id
+      - buyer_id
+      - seller_id
+      - status
+      - created_at
+      - updated_at
+      title: EnquiryResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ListingCreate:
+      properties:
+        category_id:
+          type: integer
+          title: Category Id
+          minimum: 0.0
+          exclusiveMinimum: true
+        title:
+          type: string
+          maxLength: 200
+          minLength: 3
+          title: Title
+        description:
+          type: string
+          maxLength: 10000
+          minLength: 1
+          title: Description
+        price:
+          anyOf:
+          - type: number
+            minimum: 0.0
+          - type: string
+          title: Price
+        condition:
+          type: string
+          maxLength: 30
+          minLength: 1
+          title: Condition
+      type: object
+      required:
+      - category_id
+      - title
+      - description
+      - price
+      - condition
+      title: ListingCreate
+    ListingImageResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        listing_id:
+          type: integer
+          title: Listing Id
+        image_url:
+          type: string
+          title: Image Url
+        alt_text:
+          title: Alt Text
+          type: string
+          nullable: true
+        position:
+          type: integer
+          title: Position
+      type: object
+      required:
+      - id
+      - listing_id
+      - image_url
+      - alt_text
+      - position
+      title: ListingImageResponse
+    ListingResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        seller_id:
+          type: integer
+          title: Seller Id
+        category_id:
+          type: integer
+          title: Category Id
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        price:
+          type: string
+          title: Price
+        currency:
+          type: string
+          title: Currency
+        condition:
+          type: string
+          title: Condition
+        status:
+          type: string
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - id
+      - seller_id
+      - category_id
+      - title
+      - description
+      - price
+      - currency
+      - condition
+      - status
+      - created_at
+      - updated_at
+      title: ListingResponse
+    ListingUpdate:
+      properties:
+        category_id:
+          title: Category Id
+          type: integer
+          nullable: true
+          minimum: 0.0
+          exclusiveMinimum: true
+        title:
+          title: Title
+          type: string
+          maxLength: 200
+          minLength: 3
+          nullable: true
+        description:
+          title: Description
+          type: string
+          maxLength: 10000
+          minLength: 1
+          nullable: true
+        price:
+          anyOf:
+          - type: number
+            minimum: 0.0
+          - type: string
+          title: Price
+          nullable: true
+        condition:
+          title: Condition
+          type: string
+          maxLength: 30
+          minLength: 1
+          nullable: true
+      type: object
+      title: ListingUpdate
+    LoginRequest:
+      properties:
+        username_or_email:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Username Or Email
+        password:
+          type: string
+          maxLength: 128
+          minLength: 1
+          title: Password
+      type: object
+      required:
+      - username_or_email
+      - password
+      title: LoginRequest
+    RegisterRequest:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        username:
+          type: string
+          maxLength: 80
+          minLength: 3
+          pattern: ^[A-Za-z0-9_.-]+$
+          title: Username
+        password:
+          type: string
+          maxLength: 128
+          minLength: 12
+          title: Password
+        full_name:
+          type: string
+          maxLength: 150
+          minLength: 1
+          title: Full Name
+        student_id:
+          title: Student Id
+          type: string
+          maxLength: 80
+          nullable: true
+      type: object
+      required:
+      - email
+      - username
+      - password
+      - full_name
+      title: RegisterRequest
+    ReportCreate:
+      properties:
+        reason:
+          type: string
+          enum:
+          - spam
+          - fraud
+          - prohibited_item
+          - misleading_listing
+          - harassment
+          - other
+          title: Reason
+        details:
+          title: Details
+          type: string
+          maxLength: 2000
+          nullable: true
+      type: object
+      required:
+      - reason
+      title: ReportCreate
+    ReportResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        listing_id:
+          type: integer
+          title: Listing Id
+        reporter_id:
+          type: integer
+          title: Reporter Id
+        reviewer_id:
+          title: Reviewer Id
+          type: integer
+          nullable: true
+        reason:
+          type: string
+          title: Reason
+        details:
+          title: Details
+          type: string
+          nullable: true
+        status:
+          type: string
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        reviewed_at:
+          title: Reviewed At
+          type: string
+          format: date-time
+          nullable: true
+      type: object
+      required:
+      - id
+      - listing_id
+      - reporter_id
+      - reviewer_id
+      - reason
+      - details
+      - status
+      - created_at
+      - reviewed_at
+      title: ReportResponse
+    ReportReview:
+      properties:
+        action:
+          type: string
+          enum:
+          - dismiss
+          - hide_listing
+          - remove_listing
+          title: Action
+        reason:
+          type: string
+          maxLength: 1000
+          minLength: 3
+          title: Reason
+      type: object
+      required:
+      - action
+      - reason
+      title: ReportReview
+    ReservationAction:
+      properties:
+        action:
+          type: string
+          enum:
+          - accept
+          - reject
+          - cancel
+          - complete
+          title: Action
+      type: object
+      required:
+      - action
+      title: ReservationAction
+    ReservationCreate:
+      properties:
+        listing_id:
+          type: integer
+          title: Listing Id
+          minimum: 0.0
+          exclusiveMinimum: true
+      type: object
+      required:
+      - listing_id
+      title: ReservationCreate
+    ReservationResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        listing_id:
+          type: integer
+          title: Listing Id
+        buyer_id:
+          type: integer
+          title: Buyer Id
+        seller_id:
+          type: integer
+          title: Seller Id
+        status:
+          type: string
+          title: Status
+        reserved_at:
+          type: string
+          format: date-time
+          title: Reserved At
+        completed_at:
+          title: Completed At
+          type: string
+          format: date-time
+          nullable: true
+      type: object
+      required:
+      - id
+      - listing_id
+      - buyer_id
+      - seller_id
+      - status
+      - reserved_at
+      - completed_at
+      title: ReservationResponse
+    TokenResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        token_type:
+          type: string
+          title: Token Type
+          default: bearer
+        expires_in:
+          type: integer
+          title: Expires In
+        user:
+          $ref: '#/components/schemas/UserResponse'
+      type: object
+      required:
+      - access_token
+      - expires_in
+      - user
+      title: TokenResponse
+    UserResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        email:
+          type: string
+          title: Email
+        username:
+          type: string
+          title: Username
+        full_name:
+          type: string
+          title: Full Name
+        student_id:
+          title: Student Id
+          type: string
+          nullable: true
+        verification_status:
+          type: string
+          title: Verification Status
+        role:
+          type: string
+          title: Role
+        account_status:
+          type: string
+          title: Account Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - email
+      - username
+      - full_name
+      - student_id
+      - verification_status
+      - role
+      - account_status
+      - created_at
+      title: UserResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer
