@@ -1,10 +1,6 @@
 from app.models.entities import (
     AIEmbedding,
-    AIQuery,
     Category,
-    ChatFeedback,
-    ChatMessage,
-    ChatSession,
     Enquiry,
     EnquiryMessage,
     Favourite,
@@ -17,19 +13,7 @@ from app.models.entities import (
 )
 
 __all__ = [
-    "User",
-    "Category",
-    "Listing",
-    "ListingImage",
-    "Favourite",
-    "Reservation",
-    "Enquiry",
-    "EnquiryMessage",
-    "Report",
-    "ModerationAction",
-    "ChatSession",
-    "ChatMessage",
-    "ChatFeedback",
-    "AIQuery",
-    "AIEmbedding",
+    "User", "Category", "Listing", "ListingImage", "Favourite",
+    "Reservation", "Enquiry", "EnquiryMessage", "Report",
+    "ModerationAction", "AIEmbedding",
 ]

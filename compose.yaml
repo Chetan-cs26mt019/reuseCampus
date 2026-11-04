@@ -25,11 +25,15 @@ services:
     environment:
       DATABASE_URL: mysql+pymysql://reuse_user:${MYSQL_PASSWORD:-local_demo_password_change_me}@db:3306/reuse_campus
       SECRET_KEY: ${SECRET_KEY:-local-development-secret-key-change-before-deployment-123456}
+      HF_HOME: /root/.cache/huggingface
     ports:
       - "8000:8000"
+    volumes:
+      - hf_cache:/root/.cache/huggingface
     depends_on:
       db:
         condition: service_healthy
 
 volumes:
   mysql_data:
+  hf_cache:

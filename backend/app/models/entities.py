@@ -292,87 +292,11 @@ class ModerationAction(Base):
 
 
 # ============================================================
-# ARCHIT'S PART: CHATBOT SESSIONS, MESSAGES, FEEDBACK AND AI LOGS
+
+
 # ============================================================
-
-class ChatSession(Base):
-    __tablename__ = "chat_sessions"
-    __table_args__ = (
-        Index("ix_chat_sessions_user_created", "user_id", "created_at"),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL")
-    )
-    # Store a hash of an opaque guest-session token, never the raw token.
-    guest_token_hash: Mapped[str | None] = mapped_column(
-        String(128), unique=True
-    )
-    created_at: Mapped[DateTime] = mapped_column(
-        DateTime, nullable=False, server_default=func.now()
-    )
-    last_activity_at: Mapped[DateTime] = mapped_column(
-        DateTime, nullable=False, server_default=func.now()
-    )
-    expires_at: Mapped[DateTime | None] = mapped_column(DateTime)
-
-
-class ChatMessage(Base):
-    __tablename__ = "chat_messages"
-    __table_args__ = (
-        Index("ix_chat_messages_session_created", "session_id", "created_at"),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    session_id: Mapped[int] = mapped_column(
-        ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False
-    )
-    role: Mapped[str] = mapped_column(String(20), nullable=False)
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    created_at: Mapped[DateTime] = mapped_column(
-        DateTime, nullable=False, server_default=func.now()
-    )
-
-
-class ChatFeedback(Base):
-    __tablename__ = "chat_feedback"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    session_id: Mapped[int] = mapped_column(
-        ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False
-    )
-    message_id: Mapped[int | None] = mapped_column(
-        ForeignKey("chat_messages.id", ondelete="SET NULL")
-    )
-    rating: Mapped[str] = mapped_column(String(20), nullable=False)
-    comments: Mapped[str | None] = mapped_column(String(1000))
-    created_at: Mapped[DateTime] = mapped_column(
-        DateTime, nullable=False, server_default=func.now()
-    )
-
-
-class AIQuery(Base):
-    __tablename__ = "ai_queries"
-    __table_args__ = (
-        Index("ix_ai_queries_created", "created_at"),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL")
-    )
-    query_text: Mapped[str] = mapped_column(String(1000), nullable=False)
-    result_count: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0
-    )
-    latency_ms: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0
-    )
-    created_at: Mapped[DateTime] = mapped_column(
-        DateTime, nullable=False, server_default=func.now()
-    )
-
+# AI RECOMMENDATION EMBEDDINGS
+# ============================================================
 
 class AIEmbedding(Base):
     __tablename__ = "ai_embeddings"
@@ -385,7 +309,7 @@ class AIEmbedding(Base):
         ForeignKey("listings.id", ondelete="CASCADE"), nullable=False
     )
     model_version: Mapped[str] = mapped_column(String(100), nullable=False)
-    vector_ref: Mapped[str] = mapped_column(String(500), nullable=False)
+    vector_ref: Mapped[str] = mapped_column(Text, nullable=False)
     source_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     generated_at: Mapped[DateTime] = mapped_column(
         DateTime, nullable=False, server_default=func.now()

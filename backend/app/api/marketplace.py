@@ -10,6 +10,8 @@ from fastapi import (
     status,
 )
 from sqlalchemy.orm import Session
+from app.schemas.pagination import PaginatedResponse
+from app.services.pagination import paginate_items
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
@@ -32,9 +34,12 @@ from app.services.marketplace import (
 router = APIRouter(tags=["Marketplace"])
 
 
-@router.get("/categories", response_model=list[CategoryResponse])
-def get_categories(db: Session = Depends(get_db)):
-    return list_categories(db)
+@router.get("/categories", response_model=PaginatedResponse[CategoryResponse])
+def get_categories(
+    page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=50),
+    db: Session = Depends(get_db),
+):
+    return paginate_items(list_categories(db), page, size)
 
 
 @router.post(
@@ -58,27 +63,23 @@ def post_listing(
     )
 
 
-@router.get("/listings", response_model=list[ListingResponse])
+@router.get("/listings", response_model=PaginatedResponse[ListingResponse])
 def get_listings(
     q: str | None = Query(default=None, max_length=200),
     category_id: int | None = Query(default=None, gt=0),
     min_price: Decimal | None = Query(default=None, ge=0),
     max_price: Decimal | None = Query(default=None, ge=0),
     condition: str | None = Query(default=None, max_length=30),
-    limit: int = Query(default=20, ge=1, le=100),
-    offset: int = Query(default=0, ge=0),
+    page: int = Query(default=1, ge=1),
+    size: int = Query(default=20, ge=1, le=50),
     db: Session = Depends(get_db),
 ):
-    return search_listings(
-        db,
-        q=q,
-        category_id=category_id,
-        min_price=min_price,
-        max_price=max_price,
-        condition=condition,
-        limit=limit,
-        offset=offset,
+    results = search_listings(
+        db, q=q, category_id=category_id,
+        min_price=min_price, max_price=max_price,
+        condition=condition, limit=100000, offset=0,
     )
+    return paginate_items(results, page, size)
 
 
 @router.get("/listings/{listing_id}", response_model=ListingResponse)
@@ -135,14 +136,15 @@ def unfavourite_listing(
     remove_favourite(db, current_user, listing_id)
 
 
-@router.get("/favourites", response_model=list[ListingResponse])
+@router.get("/favourites", response_model=PaginatedResponse[ListingResponse])
 def get_my_favourites(
+    page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=50),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     from app.services.marketplace import list_favourites
 
-    return list_favourites(db, current_user)
+    return paginate_items(list_favourites(db, current_user), page, size)
 
 @router.post(
     "/listings/{listing_id}/images",
@@ -169,15 +171,16 @@ async def upload_listing_image_endpoint(
 
 @router.get(
     "/listings/{listing_id}/images",
-    response_model=list[ListingImageResponse],
+    response_model=PaginatedResponse[ListingImageResponse],
 )
 def get_listing_images_endpoint(
     listing_id: int,
+    page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=50),
     db: Session = Depends(get_db),
 ):
     from app.services.listing_images import list_listing_images
 
-    return list_listing_images(db, listing_id)
+    return paginate_items(list_listing_images(db, listing_id), page, size)
 
 
 @router.delete(

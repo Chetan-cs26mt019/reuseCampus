@@ -1,39 +1,24 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: ReUse Campus API
-  description: Backend API for the ReUse Campus student-to-student marketplace and
-    chatbot.
+  description: Backend API for the ReUse Campus student-to-student marketplace with
+    AI-powered recommendations.
   version: 0.1.0
 paths:
   /orders:
-    get:
-      tags:
-      - Orders
-      summary: List My Reservations
-      operationId: list_my_reservations_orders_get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/ReservationResponse'
-                type: array
-                title: Response List My Reservations Orders Get
-      security:
-      - HTTPBearer: []
     post:
       tags:
       - Orders
       summary: Request Reservation
       operationId: request_reservation_orders_post
+      security:
+      - HTTPBearer: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ReservationCreate'
-        required: true
       responses:
         '201':
           description: Successful Response
@@ -42,13 +27,121 @@ paths:
               schema:
                 $ref: '#/components/schemas/ReservationResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+      - Orders
+      summary: List My Reservations
+      operationId: list_my_reservations_orders_get
       security:
       - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse_ReservationResponse_'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /orders/{order_id}:
     get:
       tags:
@@ -72,11 +165,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/ReservationResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       tags:
       - Orders
@@ -105,40 +234,61 @@ paths:
               schema:
                 $ref: '#/components/schemas/ReservationResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /enquiry-threads:
-    get:
-      tags:
-      - Enquiries
-      summary: List Enquiries Endpoint
-      operationId: list_enquiries_endpoint_enquiry_threads_get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/EnquiryResponse'
-                type: array
-                title: Response List Enquiries Endpoint Enquiry Threads Get
-      security:
-      - HTTPBearer: []
     post:
       tags:
       - Enquiries
       summary: Create Enquiry Endpoint
       operationId: create_enquiry_endpoint_enquiry_threads_post
+      security:
+      - HTTPBearer: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EnquiryCreate'
-        required: true
       responses:
         '201':
           description: Successful Response
@@ -147,13 +297,121 @@ paths:
               schema:
                 $ref: '#/components/schemas/EnquiryResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+      - Enquiries
+      summary: List Enquiries Endpoint
+      operationId: list_enquiries_endpoint_enquiry_threads_get
       security:
       - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse_EnquiryResponse_'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /enquiry-threads/{enquiry_id}:
     get:
       tags:
@@ -177,11 +435,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/EnquiryResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /enquiry-threads/{enquiry_id}/messages:
     get:
       tags:
@@ -197,23 +491,72 @@ paths:
         schema:
           type: integer
           title: Enquiry Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/EnquiryMessageResponse'
-                title: Response List Messages Endpoint Enquiry Threads  Enquiry Id  Messages
-                  Get
+                $ref: '#/components/schemas/PaginatedResponse_EnquiryMessageResponse_'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
       - Enquiries
@@ -242,11 +585,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/EnquiryMessageResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /listings/{listing_id}/reports:
     post:
       tags:
@@ -276,29 +655,122 @@ paths:
               schema:
                 $ref: '#/components/schemas/ReportResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /moderation/reports:
     get:
       tags:
       - Moderation
       summary: List Reports Endpoint
       operationId: list_reports_endpoint_moderation_reports_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/ReportResponse'
-                type: array
-                title: Response List Reports Endpoint Moderation Reports Get
-      security:
-      - HTTPBearer: []
+                $ref: '#/components/schemas/PaginatedResponse_ReportResponse_'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /moderation/reports/{report_id}:
     patch:
       tags:
@@ -328,116 +800,347 @@ paths:
               schema:
                 $ref: '#/components/schemas/ReportResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /chat/sessions:
-    post:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /recommendations/popular:
+    get:
       tags:
-      - Chatbot
-      summary: Create Chat Session
-      operationId: create_chat_session_chat_sessions_post
+      - AI Recommendations
+      summary: Get Popular
+      operationId: get_popular_recommendations_popular_get
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChatSessionResponse'
-  /chat/sessions/{session_id}/messages:
-    post:
+                $ref: '#/components/schemas/PaginatedResponse_RecommendationResponse_'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /recommendations/similar/{listing_id}:
+    get:
       tags:
-      - Chatbot
-      summary: Send Chat Message
-      operationId: send_chat_message_chat_sessions__session_id__messages_post
+      - AI Recommendations
+      summary: Get Similar
+      operationId: get_similar_recommendations_similar__listing_id__get
       parameters:
-      - name: session_id
+      - name: listing_id
         in: path
         required: true
         schema:
           type: integer
-          title: Session Id
-      - name: x-chat-token
-        in: header
-        required: true
-        schema:
-          type: string
-          title: X-Chat-Token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ChatMessageRequest'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ChatMessageResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /chat/sessions/{session_id}/feedback:
-    post:
-      tags:
-      - Chatbot
-      summary: Submit Chat Feedback
-      operationId: submit_chat_feedback_chat_sessions__session_id__feedback_post
-      parameters:
-      - name: session_id
-        in: path
-        required: true
+          title: Listing Id
+      - name: page
+        in: query
+        required: false
         schema:
           type: integer
-          title: Session Id
-      - name: x-chat-token
-        in: header
-        required: true
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
         schema:
-          type: string
-          title: X-Chat-Token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ChatFeedbackRequest'
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChatFeedbackResponse'
+                $ref: '#/components/schemas/PaginatedResponse_RecommendationResponse_'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /recommendations:
+    get:
+      tags:
+      - AI Recommendations
+      summary: Get Personalized
+      operationId: get_personalized_recommendations_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse_RecommendationResponse_'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /categories:
     get:
       tags:
       - Marketplace
       summary: Get Categories
       operationId: get_categories_categories_get
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/CategoryResponse'
-                type: array
-                title: Response Get Categories Categories Get
+                $ref: '#/components/schemas/PaginatedResponse_CategoryResponse_'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /listings:
     post:
       tags:
@@ -460,11 +1163,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListingResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     get:
       tags:
       - Marketplace
@@ -475,19 +1214,20 @@ paths:
         in: query
         required: false
         schema:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
           title: Q
-          type: string
-          maxLength: 200
-          nullable: true
       - name: category_id
         in: query
         required: false
         schema:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: 'null'
           title: Category Id
-          type: integer
-          nullable: true
-          minimum: 0
-          exclusiveMinimum: true
       - name: min_price
         in: query
         required: false
@@ -496,8 +1236,8 @@ paths:
           - type: number
             minimum: 0.0
           - type: string
+          - type: 'null'
           title: Min Price
-          nullable: true
       - name: max_price
         in: query
         required: false
@@ -506,49 +1246,83 @@ paths:
           - type: number
             minimum: 0.0
           - type: string
+          - type: 'null'
           title: Max Price
-          nullable: true
       - name: condition
         in: query
         required: false
         schema:
+          anyOf:
+          - type: string
+            maxLength: 30
+          - type: 'null'
           title: Condition
-          type: string
-          maxLength: 30
-          nullable: true
-      - name: limit
+      - name: page
         in: query
         required: false
         schema:
           type: integer
-          maximum: 100
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
           minimum: 1
           default: 20
-          title: Limit
-      - name: offset
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 0
-          default: 0
-          title: Offset
+          title: Size
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ListingResponse'
-                title: Response Get Listings Listings Get
+                $ref: '#/components/schemas/PaginatedResponse_ListingResponse_'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /listings/{listing_id}:
     get:
       tags:
@@ -570,11 +1344,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListingResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       tags:
       - Marketplace
@@ -603,11 +1413,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListingResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /listings/{listing_id}/favourite:
     post:
       tags:
@@ -631,11 +1477,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListingResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
       - Marketplace
@@ -654,29 +1536,122 @@ paths:
         '204':
           description: Successful Response
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /favourites:
     get:
       tags:
       - Marketplace
       summary: Get My Favourites
       operationId: get_my_favourites_favourites_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/ListingResponse'
-                type: array
-                title: Response Get My Favourites Favourites Get
-      security:
-      - HTTPBearer: []
+                $ref: '#/components/schemas/PaginatedResponse_ListingResponse_'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /listings/{listing_id}/images:
     post:
       tags:
@@ -706,11 +1681,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListingImageResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     get:
       tags:
       - Marketplace
@@ -723,23 +1734,72 @@ paths:
         schema:
           type: integer
           title: Listing Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          default: 20
+          title: Size
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ListingImageResponse'
-                title: Response Get Listing Images Endpoint Listings  Listing Id  Images
-                  Get
+                $ref: '#/components/schemas/PaginatedResponse_ListingImageResponse_'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /listings/{listing_id}/images/{image_id}:
     delete:
       tags:
@@ -765,11 +1825,47 @@ paths:
         '204':
           description: Successful Response
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/register:
     post:
       tags:
@@ -790,11 +1886,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/login:
     post:
       tags:
@@ -815,11 +1947,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
         '422':
-          description: Validation Error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/me:
     get:
       tags:
@@ -833,6 +2001,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
       - HTTPBearer: []
   /health:
@@ -847,19 +2057,62 @@ paths:
           content:
             application/json:
               schema: {}
+        '400':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Standard error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     Body_upload_listing_image_endpoint_listings__listing_id__images_post:
       properties:
         file:
           type: string
+          contentMediaType: application/octet-stream
           title: File
-          format: binary
         alt_text:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
           title: Alt Text
-          type: string
-          maxLength: 255
-          nullable: true
       type: object
       required:
       - file
@@ -873,9 +2126,10 @@ components:
           type: string
           title: Name
         parent_category_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
           title: Parent Category Id
-          type: integer
-          nullable: true
         is_active:
           type: boolean
           title: Is Active
@@ -886,143 +2140,12 @@ components:
       - parent_category_id
       - is_active
       title: CategoryResponse
-    ChatFeedbackRequest:
-      properties:
-        rating:
-          type: string
-          enum:
-          - helpful
-          - not_helpful
-          title: Rating
-        message_id:
-          title: Message Id
-          type: integer
-          nullable: true
-          minimum: 0.0
-          exclusiveMinimum: true
-        comments:
-          title: Comments
-          type: string
-          maxLength: 1000
-          nullable: true
-      type: object
-      required:
-      - rating
-      title: ChatFeedbackRequest
-    ChatFeedbackResponse:
-      properties:
-        feedback_id:
-          type: integer
-          title: Feedback Id
-        session_id:
-          type: integer
-          title: Session Id
-        message_id:
-          title: Message Id
-          type: integer
-          nullable: true
-        rating:
-          type: string
-          title: Rating
-        comments:
-          title: Comments
-          type: string
-          nullable: true
-      type: object
-      required:
-      - feedback_id
-      - session_id
-      - message_id
-      - rating
-      - comments
-      title: ChatFeedbackResponse
-    ChatListingResult:
-      properties:
-        listing_id:
-          type: integer
-          title: Listing Id
-        title:
-          type: string
-          title: Title
-        price:
-          type: string
-          title: Price
-        currency:
-          type: string
-          title: Currency
-        category:
-          type: string
-          title: Category
-        condition:
-          type: string
-          title: Condition
-        image_url:
-          title: Image Url
-          type: string
-          nullable: true
-      type: object
-      required:
-      - listing_id
-      - title
-      - price
-      - currency
-      - category
-      - condition
-      title: ChatListingResult
-    ChatMessageRequest:
-      properties:
-        message:
-          type: string
-          maxLength: 1000
-          minLength: 1
-          title: Message
-      type: object
-      required:
-      - message
-      title: ChatMessageRequest
-    ChatMessageResponse:
-      properties:
-        session_id:
-          type: integer
-          title: Session Id
-        message:
-          type: string
-          title: Message
-        result_count:
-          type: integer
-          title: Result Count
-        listings:
-          items:
-            $ref: '#/components/schemas/ChatListingResult'
-          type: array
-          title: Listings
-      type: object
-      required:
-      - session_id
-      - message
-      - result_count
-      - listings
-      title: ChatMessageResponse
-    ChatSessionResponse:
-      properties:
-        session_id:
-          type: integer
-          title: Session Id
-        guest_token:
-          type: string
-          title: Guest Token
-      type: object
-      required:
-      - session_id
-      - guest_token
-      title: ChatSessionResponse
     EnquiryCreate:
       properties:
         listing_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Listing Id
-          minimum: 0.0
-          exclusiveMinimum: true
       type: object
       required:
       - listing_id
@@ -1057,10 +2180,11 @@ components:
           format: date-time
           title: Created At
         read_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
           title: Read At
-          type: string
-          format: date-time
-          nullable: true
       type: object
       required:
       - id
@@ -1118,9 +2242,8 @@ components:
       properties:
         category_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Category Id
-          minimum: 0.0
-          exclusiveMinimum: true
         title:
           type: string
           maxLength: 200
@@ -1162,9 +2285,10 @@ components:
           type: string
           title: Image Url
         alt_text:
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Alt Text
-          type: string
-          nullable: true
         position:
           type: integer
           title: Position
@@ -1230,36 +2354,39 @@ components:
     ListingUpdate:
       properties:
         category_id:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0.0
+          - type: 'null'
           title: Category Id
-          type: integer
-          nullable: true
-          minimum: 0.0
-          exclusiveMinimum: true
         title:
+          anyOf:
+          - type: string
+            maxLength: 200
+            minLength: 3
+          - type: 'null'
           title: Title
-          type: string
-          maxLength: 200
-          minLength: 3
-          nullable: true
         description:
+          anyOf:
+          - type: string
+            maxLength: 10000
+            minLength: 1
+          - type: 'null'
           title: Description
-          type: string
-          maxLength: 10000
-          minLength: 1
-          nullable: true
         price:
           anyOf:
           - type: number
             minimum: 0.0
           - type: string
+          - type: 'null'
           title: Price
-          nullable: true
         condition:
+          anyOf:
+          - type: string
+            maxLength: 30
+            minLength: 1
+          - type: 'null'
           title: Condition
-          type: string
-          maxLength: 30
-          minLength: 1
-          nullable: true
       type: object
       title: ListingUpdate
     LoginRequest:
@@ -1279,6 +2406,282 @@ components:
       - username_or_email
       - password
       title: LoginRequest
+    PaginatedResponse_CategoryResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CategoryResponse'
+          type: array
+          title: Items
+        page:
+          type: integer
+          minimum: 1.0
+          title: Page
+        size:
+          type: integer
+          maximum: 50.0
+          minimum: 1.0
+          title: Size
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+      type: object
+      required:
+      - items
+      - page
+      - size
+      - total
+      title: PaginatedResponse[CategoryResponse]
+    PaginatedResponse_EnquiryMessageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EnquiryMessageResponse'
+          type: array
+          title: Items
+        page:
+          type: integer
+          minimum: 1.0
+          title: Page
+        size:
+          type: integer
+          maximum: 50.0
+          minimum: 1.0
+          title: Size
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+      type: object
+      required:
+      - items
+      - page
+      - size
+      - total
+      title: PaginatedResponse[EnquiryMessageResponse]
+    PaginatedResponse_EnquiryResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EnquiryResponse'
+          type: array
+          title: Items
+        page:
+          type: integer
+          minimum: 1.0
+          title: Page
+        size:
+          type: integer
+          maximum: 50.0
+          minimum: 1.0
+          title: Size
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+      type: object
+      required:
+      - items
+      - page
+      - size
+      - total
+      title: PaginatedResponse[EnquiryResponse]
+    PaginatedResponse_ListingImageResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ListingImageResponse'
+          type: array
+          title: Items
+        page:
+          type: integer
+          minimum: 1.0
+          title: Page
+        size:
+          type: integer
+          maximum: 50.0
+          minimum: 1.0
+          title: Size
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+      type: object
+      required:
+      - items
+      - page
+      - size
+      - total
+      title: PaginatedResponse[ListingImageResponse]
+    PaginatedResponse_ListingResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ListingResponse'
+          type: array
+          title: Items
+        page:
+          type: integer
+          minimum: 1.0
+          title: Page
+        size:
+          type: integer
+          maximum: 50.0
+          minimum: 1.0
+          title: Size
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+      type: object
+      required:
+      - items
+      - page
+      - size
+      - total
+      title: PaginatedResponse[ListingResponse]
+    PaginatedResponse_RecommendationResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/RecommendationResponse'
+          type: array
+          title: Items
+        page:
+          type: integer
+          minimum: 1.0
+          title: Page
+        size:
+          type: integer
+          maximum: 50.0
+          minimum: 1.0
+          title: Size
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+      type: object
+      required:
+      - items
+      - page
+      - size
+      - total
+      title: PaginatedResponse[RecommendationResponse]
+    PaginatedResponse_ReportResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ReportResponse'
+          type: array
+          title: Items
+        page:
+          type: integer
+          minimum: 1.0
+          title: Page
+        size:
+          type: integer
+          maximum: 50.0
+          minimum: 1.0
+          title: Size
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+      type: object
+      required:
+      - items
+      - page
+      - size
+      - total
+      title: PaginatedResponse[ReportResponse]
+    PaginatedResponse_ReservationResponse_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ReservationResponse'
+          type: array
+          title: Items
+        page:
+          type: integer
+          minimum: 1.0
+          title: Page
+        size:
+          type: integer
+          maximum: 50.0
+          minimum: 1.0
+          title: Size
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+      type: object
+      required:
+      - items
+      - page
+      - size
+      - total
+      title: PaginatedResponse[ReservationResponse]
+    RecommendationResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        seller_id:
+          type: integer
+          title: Seller Id
+        category_id:
+          type: integer
+          title: Category Id
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        price:
+          type: string
+          title: Price
+        currency:
+          type: string
+          title: Currency
+        condition:
+          type: string
+          title: Condition
+        status:
+          type: string
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        similarity_score:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Similarity Score
+        recommendation_reason:
+          type: string
+          title: Recommendation Reason
+      type: object
+      required:
+      - id
+      - seller_id
+      - category_id
+      - title
+      - description
+      - price
+      - currency
+      - condition
+      - status
+      - created_at
+      - updated_at
+      - recommendation_reason
+      title: RecommendationResponse
     RegisterRequest:
       properties:
         email:
@@ -1302,10 +2705,11 @@ components:
           minLength: 1
           title: Full Name
         student_id:
+          anyOf:
+          - type: string
+            maxLength: 80
+          - type: 'null'
           title: Student Id
-          type: string
-          maxLength: 80
-          nullable: true
       type: object
       required:
       - email
@@ -1326,10 +2730,11 @@ components:
           - other
           title: Reason
         details:
+          anyOf:
+          - type: string
+            maxLength: 2000
+          - type: 'null'
           title: Details
-          type: string
-          maxLength: 2000
-          nullable: true
       type: object
       required:
       - reason
@@ -1346,16 +2751,18 @@ components:
           type: integer
           title: Reporter Id
         reviewer_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
           title: Reviewer Id
-          type: integer
-          nullable: true
         reason:
           type: string
           title: Reason
         details:
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Details
-          type: string
-          nullable: true
         status:
           type: string
           title: Status
@@ -1364,10 +2771,11 @@ components:
           format: date-time
           title: Created At
         reviewed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
           title: Reviewed At
-          type: string
-          format: date-time
-          nullable: true
       type: object
       required:
       - id
@@ -1417,9 +2825,8 @@ components:
       properties:
         listing_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Listing Id
-          minimum: 0.0
-          exclusiveMinimum: true
       type: object
       required:
       - listing_id
@@ -1446,10 +2853,11 @@ components:
           format: date-time
           title: Reserved At
         completed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
           title: Completed At
-          type: string
-          format: date-time
-          nullable: true
       type: object
       required:
       - id
@@ -1495,9 +2903,10 @@ components:
           type: string
           title: Full Name
         student_id:
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Student Id
-          type: string
-          nullable: true
         verification_status:
           type: string
           title: Verification Status
@@ -1549,6 +2958,27 @@ components:
       - msg
       - type
       title: ValidationError
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          required:
+          - code
+          - message
+          - details
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: Invalid input
+            details:
+              nullable: true
+              description: Additional validation or error details
   securitySchemes:
     HTTPBearer:
       type: http
