@@ -11,3 +11,7 @@ httpx
 
 Pillow>=11.0.0
 email-validator
+
+# Local semantic recommendation model
+sentence-transformers>=5.0,<6.0
+numpy>=1.26

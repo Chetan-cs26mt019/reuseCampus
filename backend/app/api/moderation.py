@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
+from app.schemas.pagination import PaginatedResponse
+from app.services.pagination import paginate_items
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -49,13 +51,14 @@ def create_report_endpoint(
 
 @moderation_router.get(
     "/reports",
-    response_model=list[ReportResponse],
+    response_model=PaginatedResponse[ReportResponse],
 )
 def list_reports_endpoint(
+    page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=50),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return list_reports(db, current_user)
+    return paginate_items(list_reports(db, current_user), page, size)
 
 
 @moderation_router.patch(

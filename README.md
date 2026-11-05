@@ -14,7 +14,26 @@ Python, FastAPI, MySQL 8, SQLAlchemy, Alembic, HTML/CSS/JavaScript, OpenAPI 3.x,
 ## Dataset
 The initial dataset is planned to contain fictional listings created by the team. No real student personal data should be included. Any future third-party data or image source will be documented with its licence and permitted use.
 ## Running the application
-Add final setup instructions when Docker configuration is implemented. The target command sequence is:
+Start the application using:
+
+docker compose up --build -d
+
+Check running services using:
+
+docker compose ps
+
+API documentation: http://localhost:8000/docs
+Health check: http://localhost:8000/health
+
+The API automatically runs database migrations and loads synthetic demo data during startup.
+
+Run tests using:
+
+docker compose exec api pytest -q
+
+AI recommendations use sentence-transformers/all-MiniLM-L6-v2. The model cache is stored in the persistent Docker volume hf_cache.
+
+MySQL data is stored in the persistent volume mysql_data. Do not use docker compose down -v unless you intend to delete persistent data.
 ## Team
 
 | Member  | Name | Github     |

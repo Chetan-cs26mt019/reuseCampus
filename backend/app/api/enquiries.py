@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
+from app.schemas.pagination import PaginatedResponse
+from app.services.pagination import paginate_items
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -40,12 +42,13 @@ def create_enquiry_endpoint(
     )
 
 
-@router.get("", response_model=list[EnquiryResponse])
+@router.get("", response_model=PaginatedResponse[EnquiryResponse])
 def list_enquiries_endpoint(
+    page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=50),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return list_my_enquiries(db, current_user)
+    return paginate_items(list_my_enquiries(db, current_user), page, size)
 
 
 @router.get(
@@ -64,15 +67,16 @@ def get_enquiry_endpoint(
 
 @router.get(
     "/{enquiry_id}/messages",
-    response_model=list[EnquiryMessageResponse],
+    response_model=PaginatedResponse[EnquiryMessageResponse],
 )
 def list_messages_endpoint(
     enquiry_id: int,
+    page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=50),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return list_enquiry_messages(
-        db, current_user, enquiry_id
+    return paginate_items(
+        list_enquiry_messages(db, current_user, enquiry_id), page, size
     )
 
 

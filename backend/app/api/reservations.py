@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from app.schemas.pagination import PaginatedResponse
+from app.services.pagination import paginate_items
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
@@ -35,8 +37,9 @@ def request_reservation(
     )
 
 
-@router.get("", response_model=list[ReservationResponse])
+@router.get("", response_model=PaginatedResponse[ReservationResponse])
 def list_my_reservations(
+    page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=50),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -51,7 +54,7 @@ def list_my_reservations(
         .order_by(Reservation.created_at.desc())
     )
 
-    return list(db.scalars(statement).all())
+    return paginate_items(list(db.scalars(statement).all()), page, size)
 
 
 @router.get("/{order_id}", response_model=ReservationResponse)
