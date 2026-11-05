@@ -32,6 +32,7 @@ export default function Navbar() {
         <nav className={`nav-links ${menuOpen ? 'nav-open' : ''}`}>
           <a href="/">Home</a>
           <a href="/browse">Browse</a>
+          <a href="/listings/new">Sell an item</a>
           <a href="#categories">Categories</a>
           <a href="#trending">Trending</a>
         </nav>
