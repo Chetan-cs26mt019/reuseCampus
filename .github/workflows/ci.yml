@@ -1,0 +1,91 @@
+name: Backend CI
+
+on: [push, pull_request]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: rootpass
+          MYSQL_DATABASE: reuse_campus
+          MYSQL_USER: reuse_user
+          MYSQL_PASSWORD: reusepass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -prootpass"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=20s
+
+    env:
+      DATABASE_URL: mysql+pymysql://reuse_user:reusepass@127.0.0.1:3306/reuse_campus
+      TEST_DATABASE_URL: mysql+pymysql://reuse_user:reusepass@127.0.0.1:3306/reuse_campus_test
+      SECRET_KEY: ci-test-secret-key-not-for-production
+      HF_HOME: /tmp/huggingface-cache
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install ruff
+
+      - name: Create isolated MySQL test database
+        run: |
+          python - <<'PY'
+          import pymysql
+
+          connection = pymysql.connect(
+              host="127.0.0.1",
+              port=3306,
+              user="root",
+              password="rootpass",
+          )
+          with connection.cursor() as cursor:
+              cursor.execute("CREATE DATABASE IF NOT EXISTS reuse_campus_test")
+              cursor.execute(
+                  "GRANT ALL PRIVILEGES ON reuse_campus_test.* "
+                  "TO 'reuse_user'@'%'"
+              )
+          connection.close()
+          print("Separate MySQL test database is ready.")
+          PY
+
+      - name: Ruff lint
+        working-directory: backend
+        run: ruff check .
+
+      - name: Run tests with coverage
+        working-directory: backend
+        run: |
+          python -m pytest \
+            --cov=app \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-fail-under=60
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage-report
+          path: backend/coverage.xml
+          if-no-files-found: ignore

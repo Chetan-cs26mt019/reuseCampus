@@ -1,7 +1,8 @@
 """Replace chatbot tables with recommendation embeddings."""
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20261105_recommendations"
 down_revision = "588284b3c252"

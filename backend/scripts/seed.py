@@ -8,7 +8,6 @@ from app.db.session import SessionLocal
 from app.models import Category, Listing, User
 from app.services.auth import hash_password
 
-
 USERS = [
     {
         "email": "demo.seller@reusecampus.test",

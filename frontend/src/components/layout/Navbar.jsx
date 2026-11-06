@@ -33,6 +33,10 @@ export default function Navbar() {
           <a href="/">Home</a>
           <a href="/browse">Browse</a>
           <a href="/listings/new">Sell an item</a>
+          <a href="/orders">Reservations</a>
+          <a href="/enquiries">Messages</a>
+          <a href="/recommendations">Recommendations</a>
+          <a href="/moderation">Moderation</a>
           <a href="#categories">Categories</a>
           <a href="#trending">Trending</a>
         </nav>

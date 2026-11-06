@@ -1,22 +1,23 @@
 
+from pathlib import Path
+
+from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
-from app.api.marketplace import router as marketplace_router
-from fastapi import FastAPI
-from app.api.enquiries import router as enquiries_router
 
-from app.api.reservations import router as reservations_router
-from app.core.config import settings
+from app.api.auth import router as auth_router
+from app.api.enquiries import router as enquiries_router
+from app.api.marketplace import router as marketplace_router
 from app.api.moderation import (
     moderation_router,
     reports_router,
 )
 from app.api.recommendations import router as recommendations_router
-from pathlib import Path
-from fastapi.staticfiles import StaticFiles
-from app.api.auth import router as auth_router
+from app.api.reservations import router as reservations_router
+from app.core.config import settings
 
 app = FastAPI(
     title=settings.app_name,

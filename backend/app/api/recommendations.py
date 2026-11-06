@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models import User
-from app.schemas.recommendations import RecommendationResponse
 from app.schemas.pagination import PaginatedResponse
+from app.schemas.recommendations import RecommendationResponse
 from app.services.pagination import paginate_items
 from app.services.recommendations import (
     personalized_recommendations,

@@ -1,12 +1,11 @@
 import pytest
-
 from fastapi import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.db.base import Base
-from app.models import Category, Enquiry, EnquiryMessage, Listing, User
+from app.models import Category, EnquiryMessage, Listing, User
 from app.services.enquiries import (
     create_enquiry,
     get_enquiry_for_participant,

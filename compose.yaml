@@ -21,6 +21,7 @@ services:
   api:
     build:
       context: ./backend
+    image: reusecampus-api:latest
     restart: unless-stopped
     environment:
       DATABASE_URL: mysql+pymysql://reuse_user:${MYSQL_PASSWORD:-local_demo_password_change_me}@db:3306/reuse_campus
@@ -33,6 +34,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
 
 volumes:
   mysql_data:

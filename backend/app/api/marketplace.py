@@ -10,8 +10,6 @@ from fastapi import (
     status,
 )
 from sqlalchemy.orm import Session
-from app.schemas.pagination import PaginatedResponse
-from app.services.pagination import paginate_items
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
@@ -23,6 +21,7 @@ from app.schemas.marketplace import (
     ListingResponse,
     ListingUpdate,
 )
+from app.schemas.pagination import PaginatedResponse
 from app.services.marketplace import (
     create_listing,
     get_listing,
@@ -30,6 +29,7 @@ from app.services.marketplace import (
     search_listings,
     update_listing,
 )
+from app.services.pagination import paginate_items
 
 router = APIRouter(tags=["Marketplace"])
 

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -120,7 +120,7 @@ def review_report(
 
             listing.status = "hidden"
             listing.hidden_at = datetime.now(
-                timezone.utc
+                UTC
             ).replace(tzinfo=None)
             report.status = "action_taken"
             audit_action = "hide_listing"
@@ -134,7 +134,7 @@ def review_report(
 
             listing.status = "removed"
             listing.removed_at = datetime.now(
-                timezone.utc
+                UTC
             ).replace(tzinfo=None)
             report.status = "action_taken"
             audit_action = "remove_listing"
@@ -147,7 +147,7 @@ def review_report(
 
         report.reviewer_id = moderator.id
         report.reviewed_at = datetime.now(
-            timezone.utc
+            UTC
         ).replace(tzinfo=None)
 
         db.add(

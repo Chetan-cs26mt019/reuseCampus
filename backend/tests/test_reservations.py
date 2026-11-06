@@ -1,12 +1,11 @@
 import pytest
-
 from fastapi import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.db.base import Base
-from app.models import Category, Listing, Reservation, User
+from app.models import Category, Listing, User
 from app.services.reservations import (
     change_reservation_status,
     create_reservation,

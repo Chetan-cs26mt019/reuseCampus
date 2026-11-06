@@ -1,9 +1,10 @@
+from datetime import UTC
+
+from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
 
 from app.models import Listing, Reservation, User
-
 
 ACTIVE_RESERVATION_STATUSES = {"requested", "accepted"}
 
@@ -191,12 +192,12 @@ def change_reservation_status(
                     detail="Listing is not in the reserved state",
                 )
 
-            from datetime import datetime, timezone
+            from datetime import datetime
 
             reservation.status = "completed"
             listing.status = "sold"
             reservation.completed_at = datetime.now(
-                timezone.utc
+                UTC
             ).replace(tzinfo=None)
 
         else:
