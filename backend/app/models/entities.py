@@ -15,7 +15,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
 
-
 # ============================================================
 # SHARED MODELS: USERS, CATEGORIES, LISTINGS
 # ============================================================

@@ -12,11 +12,11 @@ from app.models import (
 )
 from app.services.embedding_model import (
     MODEL_NAME,
+    cosine_similarity,
     deserialize_embedding,
     embedding_hash,
     make_embedding,
     serialize_embedding,
-    cosine_similarity,
 )
 
 

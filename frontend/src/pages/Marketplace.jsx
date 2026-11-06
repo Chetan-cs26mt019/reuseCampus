@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { apiGet, getItems } from '../services/api'
 
+const PAGE_SIZE = 12
+
 export default function Marketplace() {
   const [listings, setListings] = useState([])
   const [categories, setCategories] = useState([])
@@ -10,17 +12,35 @@ export default function Marketplace() {
   const [categoryId, setCategoryId] = useState(
     new URLSearchParams(window.location.search).get('category') || ''
   )
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
+  const [filters, setFilters] = useState({
+    query: '',
+    categoryId: '',
+    minPrice: '',
+    maxPrice: '',
+  })
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   const loadListings = useCallback(async () => {
     setLoading(true)
     setError('')
 
     try {
-      const params = new URLSearchParams()
-      if (query.trim()) params.set('q', query.trim())
-      if (categoryId) params.set('category_id', categoryId)
+      const params = new URLSearchParams({
+        page: String(page),
+        size: String(PAGE_SIZE),
+      })
+
+      if (filters.query) params.set('q', filters.query)
+      if (filters.categoryId) params.set('category_id', filters.categoryId)
+      if (filters.minPrice !== '') params.set('min_price', filters.minPrice)
+      if (filters.maxPrice !== '') params.set('max_price', filters.maxPrice)
 
       const data = await apiGet(`/listings?${params.toString()}`)
       const items = getItems(data)
@@ -35,27 +55,56 @@ export default function Marketplace() {
       }))
 
       setListings(withImages)
+      setTotal(data.total ?? items.length)
     } catch (err) {
       setError(err.message)
+      setListings([])
+      setTotal(0)
     } finally {
       setLoading(false)
     }
-  }, [query, categoryId])
+  }, [filters, page])
 
   useEffect(() => {
     apiGet('/categories')
       .then((data) => setCategories(getItems(data)))
       .catch(() => {})
-    const timer = setTimeout(() => {
-      loadListings()
-    }, 0)
+  }, [])
 
-    return () => clearTimeout(timer)
+  useEffect(() => {
+    loadListings()
   }, [loadListings])
 
   function submitSearch(event) {
     event.preventDefault()
-    loadListings()
+
+    if (minPrice !== '' && Number(minPrice) < 0) {
+      setError('Minimum price cannot be negative.')
+      return
+    }
+
+    if (maxPrice !== '' && Number(maxPrice) < 0) {
+      setError('Maximum price cannot be negative.')
+      return
+    }
+
+    if (
+      minPrice !== '' &&
+      maxPrice !== '' &&
+      Number(minPrice) > Number(maxPrice)
+    ) {
+      setError('Minimum price cannot exceed maximum price.')
+      return
+    }
+
+    setError('')
+    setPage(1)
+    setFilters({
+      query: query.trim(),
+      categoryId,
+      minPrice,
+      maxPrice,
+    })
   }
 
   return (
@@ -69,47 +118,118 @@ export default function Marketplace() {
       </div>
 
       <form className="marketplace-filters" onSubmit={submitSearch}>
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search listings..."
-        />
-        <select value={categoryId} onChange={(event) => setCategoryId(event.target.value)}>
-          <option value="">All categories</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>{category.name}</option>
-          ))}
-        </select>
+        <label>
+          Search listings
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search listings..."
+          />
+        </label>
+
+        <label>
+          Category
+          <select
+            value={categoryId}
+            onChange={(event) => setCategoryId(event.target.value)}
+          >
+            <option value="">All categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          Minimum price (₹)
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={minPrice}
+            onChange={(event) => setMinPrice(event.target.value)}
+            placeholder="No minimum"
+          />
+        </label>
+
+        <label>
+          Maximum price (₹)
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={maxPrice}
+            onChange={(event) => setMaxPrice(event.target.value)}
+            placeholder="No maximum"
+          />
+        </label>
+
         <button type="submit">Search</button>
       </form>
 
       {loading && <p className="section-message">Loading listings...</p>}
-      {error && <p className="section-message">{error}</p>}
-      {!loading && !error && listings.length === 0 &&
-        <p className="section-message">No listings found.</p>}
+      {error && <p className="section-message" role="alert">{error}</p>}
+
+      {!loading && !error && listings.length === 0 && (
+        <p className="section-message">No listings found.</p>
+      )}
 
       {!loading && listings.length > 0 && (
-        <div className="product-grid">
-          {listings.map((item) => (
-            <article className="product-card" key={item.id}>
-              <a href={`/listings/${item.id}`} className="product-image">
-                {item.image_url
-                  ? <img src={item.image_url} alt={item.title} />
-                  : <span>📦</span>}
-                <span className="condition-tag">{item.condition}</span>
-              </a>
-              <div className="product-info">
-                <h3>{item.title}</h3>
-                <strong className="product-price">
-                  {item.currency || 'INR'} {Number(item.price).toLocaleString('en-IN')}
-                </strong>
-                <a className="product-link" href={`/listings/${item.id}`}>
-                  View details →
+        <>
+          <div className="product-grid">
+            {listings.map((item) => (
+              <article className="product-card" key={item.id}>
+                <a href={`/listings/${item.id}`} className="product-image">
+                  {item.image_url
+                    ? <img src={item.image_url} alt={item.title} />
+                    : <span>📦</span>}
+                  <span className="condition-tag">{item.condition}</span>
                 </a>
-              </div>
-            </article>
-          ))}
-        </div>
+
+                <div className="product-info">
+                  <h3>{item.title}</h3>
+                  <strong className="product-price">
+                    {item.currency || 'INR'}{' '}
+                    {Number(item.price).toLocaleString('en-IN')}
+                  </strong>
+                  <a
+                    className="product-link"
+                    href={`/listings/${item.id}`}
+                  >
+                    View details →
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <nav className="marketplace-pagination" aria-label="Listing pages">
+            <button
+              type="button"
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={page <= 1 || loading}
+            >
+              Previous
+            </button>
+
+            <span aria-live="polite">
+              Page {page} of {totalPages} ({total} listings)
+            </span>
+
+            <button
+              type="button"
+              onClick={() => setPage((current) =>
+                Math.min(totalPages, current + 1)
+              )}
+              disabled={page >= totalPages || loading}
+            >
+              Next
+            </button>
+          </nav>
+        </>
       )}
     </section>
   )

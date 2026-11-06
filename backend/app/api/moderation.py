@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Depends, Query, status
-from app.schemas.pagination import PaginatedResponse
-from app.services.pagination import paginate_items
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -11,12 +9,13 @@ from app.schemas.moderation import (
     ReportResponse,
     ReportReview,
 )
+from app.schemas.pagination import PaginatedResponse
 from app.services.moderation import (
     create_report,
     list_reports,
     review_report,
 )
-
+from app.services.pagination import paginate_items
 
 reports_router = APIRouter(
     prefix="/listings",

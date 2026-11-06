@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Depends, Query, status
-from app.schemas.pagination import PaginatedResponse
-from app.services.pagination import paginate_items
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -12,6 +10,7 @@ from app.schemas.enquiry import (
     EnquiryMessageResponse,
     EnquiryResponse,
 )
+from app.schemas.pagination import PaginatedResponse
 from app.services.enquiries import (
     create_enquiry,
     get_enquiry_for_participant,
@@ -19,7 +18,7 @@ from app.services.enquiries import (
     list_my_enquiries,
     send_enquiry_message,
 )
-
+from app.services.pagination import paginate_items
 
 router = APIRouter(
     prefix="/enquiry-threads",

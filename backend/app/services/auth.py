@@ -11,7 +11,6 @@ from argon2.exceptions import VerificationError, VerifyMismatchError
 
 from app.core.config import settings
 
-
 _password_hasher = PasswordHasher()
 TOKEN_LIFETIME_SECONDS = 3600
 

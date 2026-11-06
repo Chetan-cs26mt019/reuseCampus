@@ -1,12 +1,15 @@
-from io import BytesIO
-from PIL import Image
-
 import asyncio
+from io import BytesIO
+
 import pytest
 from fastapi import HTTPException, UploadFile
-from sqlalchemy import select
+from PIL import Image
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
-from app.models import ListingImage
+from app.db.base import Base
+from app.models import Category, Listing, ListingImage, User
 from app.services import listing_images
 from app.services.listing_images import (
     MAX_IMAGE_SIZE,
@@ -14,13 +17,6 @@ from app.services.listing_images import (
     list_listing_images,
     upload_listing_image,
 )
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
-
-from app.db.base import Base
-from app.models import Category, Listing, User
 
 
 @pytest.fixture

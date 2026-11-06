@@ -1,6 +1,6 @@
+import warnings
 from io import BytesIO
 from pathlib import Path
-import warnings
 from uuid import uuid4
 
 from fastapi import HTTPException, UploadFile, status
@@ -9,7 +9,6 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models import Listing, ListingImage, User
-
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 UPLOAD_DIR = BACKEND_DIR / "uploads" / "listings"

@@ -1,5 +1,4 @@
 import pytest
-
 from fastapi import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -10,7 +9,6 @@ from app.models import (
     Category,
     Listing,
     ModerationAction,
-    Report,
     User,
 )
 from app.services.moderation import (

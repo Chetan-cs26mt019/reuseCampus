@@ -1,5 +1,6 @@
-import pytest
+from decimal import Decimal
 
+import pytest
 from fastapi import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -220,7 +221,6 @@ def test_missing_listing_returns_404(db):
     assert error.value.status_code == 404
 
 
-from decimal import Decimal
 
 
 def test_add_favourite(db, marketplace_data):
@@ -253,8 +253,8 @@ def test_add_favourite_twice_does_not_duplicate(db, marketplace_data):
 
 
 def test_remove_favourite(db, marketplace_data):
-    from app.services.marketplace import add_favourite, remove_favourite
     from app.models import Favourite
+    from app.services.marketplace import add_favourite, remove_favourite
 
     seller, _, _, _, _, listing, _ = marketplace_data
 

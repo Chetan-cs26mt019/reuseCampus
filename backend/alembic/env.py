@@ -1,11 +1,12 @@
+import os
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+import app.models  # noqa: F401
+from alembic import context
 from app.core.config import settings
 from app.db.base import Base
-import app.models  # Registers all model tables with Base.metadata
 
 # Models will be imported here as they are implemented.
 # Importing them registers their tables with Base.metadata.
@@ -17,7 +18,6 @@ if config.config_file_name is not None:
 
 # Respect DATABASE_URL from the environment, falling back to app settings.
 # Escaping '%' prevents ConfigParser interpolation errors.
-import os
 
 database_url = os.getenv("DATABASE_URL", settings.database_url)
 config.set_main_option(
