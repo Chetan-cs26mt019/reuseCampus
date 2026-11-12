@@ -3,9 +3,10 @@ const TOKEN_KEY = 'access_token'
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem(TOKEN_KEY)
+  const isFormData = options.body instanceof FormData
 
   const headers = {
-    ...(options.body && !(options.body instanceof FormData)
+    ...(!isFormData && options.body
       ? { 'Content-Type': 'application/json' }
       : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -19,10 +20,19 @@ export async function apiRequest(endpoint, options = {}) {
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}))
-    throw new Error(data.detail || `Request failed: ${response.status}`)
+
+    const message =
+      data?.error?.message ||
+      data?.detail ||
+      `Request failed: ${response.status}`
+
+    throw new Error(message)
   }
 
-  if (response.status === 204) return null
+  if (response.status === 204) {
+    return null
+  }
+
   return response.json()
 }
 
@@ -33,5 +43,6 @@ export function getItems(data) {
   if (Array.isArray(data?.items)) return data.items
   if (Array.isArray(data?.categories)) return data.categories
   if (Array.isArray(data?.listings)) return data.listings
+
   return []
 }

@@ -24,11 +24,14 @@ export default function Register() {
     setLoading(true)
 
     try {
-      await apiRequest('/auth/register', {
+      const result = await apiRequest('/auth/register', {
         method: 'POST',
         body: JSON.stringify({ ...form, student_id: form.student_id || null }),
       })
-      window.location.href = '/login'
+
+      localStorage.setItem('access_token', result.access_token)
+      localStorage.setItem('current_user', JSON.stringify(result.user))
+      window.location.href = '/'
     } catch (err) {
       setError(err.message)
     } finally {

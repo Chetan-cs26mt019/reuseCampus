@@ -9,6 +9,8 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import ListingDetails from './pages/ListingDetails'
 import CreateListing from './pages/CreateListing'
+import Profile from './pages/Profile'
+import ListingCollection from './pages/ListingCollection'
 
 import Reservations from './features/reservations/Reservations'
 import Enquiries from './features/enquiries/Enquiries'
@@ -27,6 +29,9 @@ function App() {
 
   if (path === '/browse') page = <Marketplace />
   else if (path === '/login') page = <Login />
+  else if (path === '/profile') page = <Profile />
+  else if (path === '/my-listings') page = <ListingCollection />
+  else if (path === '/wishlist') page = <ListingCollection wishlist />
   else if (path === '/signup') page = <Register />
   else if (path === '/listings/new') page = <CreateListing />
   else if (path === '/orders') page = <Reservations />

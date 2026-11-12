@@ -20,6 +20,7 @@ class EnquiryMessageResponse(BaseModel):
     body: str
     created_at: datetime
     read_at: datetime | None
+    sender_name: str | None = None
 
 
 class EnquiryResponse(BaseModel):

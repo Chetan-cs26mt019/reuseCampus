@@ -22,3 +22,8 @@ class ReservationResponse(BaseModel):
     status: str
     reserved_at: datetime
     completed_at: datetime | None
+    listing_title: str | None = None
+    listing_price: float | None = None
+    listing_image: str | None = None
+    buyer_name: str | None = None
+    seller_name: str | None = None
