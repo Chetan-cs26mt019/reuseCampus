@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
-from app.models import Enquiry, EnquiryMessage, Listing, ListingImage, User
+from app.models import Enquiry, Listing, ListingImage, User
 from app.schemas.enquiry import (
     EnquiryCreate,
     EnquiryMessageCreate,

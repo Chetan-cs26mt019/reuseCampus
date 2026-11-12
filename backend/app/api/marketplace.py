@@ -1,7 +1,5 @@
 from decimal import Decimal
 
-from sqlalchemy import select
-
 from fastapi import (
     APIRouter,
     Depends,
@@ -11,6 +9,7 @@ from fastapi import (
     UploadFile,
     status,
 )
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -110,6 +109,7 @@ def delete_listing(
     current_user: User = Depends(get_current_user),
 ):
     from datetime import UTC, datetime
+
     from fastapi import HTTPException
 
     listing = db.get(Listing, listing_id)

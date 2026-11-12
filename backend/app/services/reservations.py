@@ -222,7 +222,7 @@ def _release_listing_if_no_active_reservations(
     if listing.status != "available":
         return
 
-    active_id = db.scalar(
+    db.scalar(
         select(Reservation.id)
         .where(
             Reservation.listing_id == listing.id,

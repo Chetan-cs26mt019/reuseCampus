@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from pydantic import BaseModel, Field
 from sqlalchemy import or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -7,7 +8,6 @@ from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models import User
 from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
-from pydantic import BaseModel, Field
 from app.services.auth import (
     TOKEN_LIFETIME_SECONDS,
     create_access_token,
@@ -118,6 +118,7 @@ def delete_my_account(
         raise HTTPException(status_code=401, detail="Password is incorrect")
 
     from datetime import UTC, datetime
+
     from app.models import Listing
 
     stamp = datetime.now(UTC).replace(tzinfo=None).timestamp()
