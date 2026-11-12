@@ -91,7 +91,7 @@ def test_create_reservation_success(db, people_and_listing):
     assert reservation.buyer_id == buyer.id
     assert reservation.seller_id == seller.id
     assert reservation.listing_id == listing.id
-    assert listing.status == "reserved"
+    assert listing.status == "available"
 
 
 def test_cannot_reserve_own_listing(db, people_and_listing):

@@ -63,9 +63,9 @@ def test_register_user():
 
     assert response.status_code == 201
     data = response.json()
-    assert data["email"] == "student@example.com"
-    assert data["username"] == "student01"
-    assert data["role"] == "student"
+    assert data["user"]["email"] == "student@example.com"
+    assert data["user"]["username"] == "student01"
+    assert data["user"]["role"] == "student"
     assert "password_hash" not in data
 
 
