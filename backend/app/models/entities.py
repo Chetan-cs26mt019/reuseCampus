@@ -266,6 +266,14 @@ class Report(Base):
     )
     reviewed_at: Mapped[DateTime | None] = mapped_column(DateTime)
 
+    @property
+    def reviewer_id(self):
+        return self.reviewed_by
+
+    @reviewer_id.setter
+    def reviewer_id(self, value):
+        self.reviewed_by = value
+
 
 class ModerationAction(Base):
     __tablename__ = "moderation_actions"

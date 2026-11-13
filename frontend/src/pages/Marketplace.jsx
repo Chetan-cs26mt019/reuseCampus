@@ -72,6 +72,8 @@ export default function Marketplace() {
   }, [])
 
   useEffect(() => {
+    // Fetch listings whenever the page or filters change.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadListings()
   }, [loadListings])
 

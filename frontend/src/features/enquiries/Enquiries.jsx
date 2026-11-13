@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
-import { apiRequest } from '../../services/apiClient'
+import { apiRequest } from '../../services/api'
 
 export default function Enquiries() {
   const [threads, setThreads] = useState([])
   const [selected, setSelected] = useState(null)
   const [messages, setMessages] = useState([])
-  const [listingId, setListingId] = useState('')
   const [body, setBody] = useState('')
   const [error, setError] = useState('')
+  const user = (() => { try { return JSON.parse(localStorage.getItem('current_user') || 'null') } catch { return null } })()
 
   const loadThreads = useCallback(async () => {
     try {
@@ -33,20 +33,6 @@ export default function Enquiries() {
     return () => clearTimeout(timer)
   }, [loadThreads])
 
-  async function createThread(event) {
-    event.preventDefault()
-    try {
-      await apiRequest('/enquiry-threads', {
-        method: 'POST',
-        body: JSON.stringify({ listing_id: Number(listingId) }),
-      })
-      setListingId('')
-      await loadThreads()
-    } catch (err) {
-      setError(err.message)
-    }
-  }
-
   async function sendMessage(event) {
     event.preventDefault()
     if (!selected || !body.trim()) return
@@ -66,11 +52,7 @@ export default function Enquiries() {
   return (
     <section className="section page-section">
       <h2>Enquiries and Messages</h2>
-      <form className="feature-form" onSubmit={createThread}>
-        <input type="number" min="1" required placeholder="Listing ID"
-          value={listingId} onChange={(e) => setListingId(e.target.value)} />
-        <button>Start enquiry</button>
-      </form>
+      <p className="section-message">Buyer enquiries and enquiries received about your listings appear here. Open a product page to start a new enquiry.</p>
       {error && <p className="form-error">{error}</p>}
       <div className="messaging-layout">
         <div>
@@ -78,15 +60,16 @@ export default function Enquiries() {
           {threads.map((thread) => (
             <button className="thread-button" key={thread.id}
               onClick={() => openThread(thread)}>
-              Listing #{thread.listing_id} · {thread.status}
+              <span className="thread-product">{thread.listing_image ? <img src={thread.listing_image} alt="" /> : <span className="product-thumb-placeholder">📦</span>}</span>
+              <span><strong>{thread.listing_title || 'Product enquiry'}</strong><br /><small>{Number(thread.seller_id) === Number(user?.id) ? `Buyer: ${thread.buyer_name}` : `Seller: ${thread.seller_name}`} · {thread.status}</small></span>
             </button>
           ))}
         </div>
         <div className="message-panel">
-          <h3>{selected ? `Conversation #${selected.id}` : 'Select a conversation'}</h3>
+          <h3>{selected ? selected.listing_title : 'Select a conversation'}</h3>{selected && <p className="section-message">{selected.listing_price != null ? `INR ${Number(selected.listing_price).toLocaleString('en-IN')} · ` : ''}{Number(selected.seller_id) === Number(user?.id) ? `Buyer: ${selected.buyer_name}` : `Seller: ${selected.seller_name}`}</p>}
           {messages.map((message) => (
             <article className="message-item" key={message.id}>
-              <small>Sender #{message.sender_id}</small>
+              <small>{message.sender_name || (Number(message.sender_id) === Number(user?.id) ? "You" : "Other participant")}</small>
               <p>{message.body}</p>
             </article>
           ))}

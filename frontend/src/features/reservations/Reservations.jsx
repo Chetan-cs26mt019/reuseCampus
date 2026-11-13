@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { apiRequest } from '../../services/apiClient'
+import { apiRequest } from '../../services/api'
 
 export default function Reservations() {
   const [items, setItems] = useState([])
-  const [listingId, setListingId] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const user = (() => { try { return JSON.parse(localStorage.getItem('current_user') || 'null') } catch { return null } })()
 
   const load = useCallback(async () => {
     try {
@@ -23,20 +23,6 @@ export default function Reservations() {
     return () => clearTimeout(timer)
   }, [load])
 
-  async function create(event) {
-    event.preventDefault()
-    try {
-      await apiRequest('/orders', {
-        method: 'POST',
-        body: JSON.stringify({ listing_id: Number(listingId) }),
-      })
-      setListingId('')
-      await load()
-    } catch (err) {
-      setError(err.message)
-    }
-  }
-
   async function update(id, action) {
     try {
       await apiRequest(`/orders/${id}`, {
@@ -52,24 +38,24 @@ export default function Reservations() {
   return (
     <section className="section page-section">
       <h2>Reservations</h2>
-      <form className="feature-form" onSubmit={create}>
-        <input type="number" min="1" required placeholder="Listing ID"
-          value={listingId} onChange={(e) => setListingId(e.target.value)} />
-        <button>Request reservation</button>
-      </form>
       {error && <p className="form-error">{error}</p>}
       {loading ? <p>Loading reservations...</p> : items.length === 0
         ? <p>No reservations yet.</p>
         : items.map((item) => (
           <article className="feature-card" key={item.id}>
-            <strong>Reservation #{item.id}</strong>
-            <p>Listing: {item.listing_id} · Status: {item.status}</p>
+            <div className="reservation-product">{item.listing_image ? <img src={item.listing_image} alt={item.listing_title || 'Product'} /> : <span className="product-thumb-placeholder">📦</span>}<div><strong>{item.listing_title || 'Product reservation'}</strong><p>{item.listing_price != null ? `INR ${Number(item.listing_price).toLocaleString('en-IN')} · ` : ''}Status: <strong>{item.status}</strong></p></div></div>
+            <p>{Number(item.seller_id) === Number(user?.id) ? `Buyer: ${item.buyer_name}` : `Seller: ${item.seller_name}`}</p>
             <div className="feature-actions">
-              {['accept', 'reject', 'cancel', 'complete'].map((action) => (
-                <button key={action} onClick={() => update(item.id, action)}>
-                  {action}
-                </button>
+              {Number(item.seller_id) === Number(user?.id) && item.status === 'requested' && ['accept', 'reject'].map((action) => (
+                <button key={action} onClick={() => update(item.id, action)}>{action}</button>
               ))}
+              {item.status === 'accepted' && (
+                <button onClick={() => update(item.id, 'complete')}>Mark completed</button>
+              )}
+              {Number(item.buyer_id) === Number(user?.id) && item.status === 'requested' && (
+                <button onClick={() => update(item.id, 'cancel')}>Cancel request</button>
+              )}
+              <a href={`/listings/${item.listing_id}`}>View product</a>
             </div>
           </article>
         ))}

@@ -1,23 +1,17 @@
 import { useState } from 'react'
-import {
-  Search,
-  ShoppingBag,
-  Menu,
-  X,
-  UserRound,
-} from 'lucide-react'
+import { ShoppingBag, Menu, X, UserRound } from 'lucide-react'
+
+function getCurrentUser() {
+  try {
+    return JSON.parse(localStorage.getItem('current_user') || 'null')
+  } catch {
+    return null
+  }
+}
 
 export default function Navbar() {
+  const currentUser = getCurrentUser()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [search, setSearch] = useState('')
-
-  function handleSearch(event) {
-    event.preventDefault()
-
-    if (!search.trim()) return
-
-    window.location.href = `/browse?q=${encodeURIComponent(search)}`
-  }
 
   return (
     <header className="navbar">
@@ -30,41 +24,40 @@ export default function Navbar() {
         </a>
 
         <nav className={`nav-links ${menuOpen ? 'nav-open' : ''}`}>
-          <a href="/">Home</a>
-          <a href="/browse">Browse</a>
-          <a href="/listings/new">Sell an item</a>
-          <a href="/orders">Reservations</a>
-          <a href="/enquiries">Messages</a>
-          <a href="/recommendations">Recommendations</a>
-          <a href="/moderation">Moderation</a>
-          <a href="#categories">Categories</a>
-          <a href="#trending">Trending</a>
+          <a href="/" onClick={() => setMenuOpen(false)}>Home</a>
+          <a href="/browse" onClick={() => setMenuOpen(false)}>Browse</a>
+          <a href="/listings/new" onClick={() => setMenuOpen(false)}>Sell an Item</a>
+          <a href="/recommendations" onClick={() => setMenuOpen(false)}>Recommendations</a>
+
+          {currentUser?.role === 'moderator' && (
+            <a href="/moderation" onClick={() => setMenuOpen(false)}>Moderation</a>
+          )}
         </nav>
 
-        <form className="nav-search" onSubmit={handleSearch}>
-          <Search size={18} />
-          <input
-            type="search"
-            placeholder="Search products..."
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </form>
-
         <div className="nav-actions">
-          <a href="/login" className="login-link">
-            <UserRound size={18} />
-            Login
-          </a>
-          <a href="/signup" className="signup-button">
-            Get Started
-          </a>
+          {currentUser ? (
+            <a href="/profile" className="login-link">
+              <UserRound size={19} />
+              Profile
+            </a>
+          ) : (
+            <>
+              <a href="/login" className="login-link">
+                <UserRound size={18} />
+                Login
+              </a>
+              <a href="/signup" className="signup-button">
+                Sign Up
+              </a>
+            </>
+          )}
         </div>
 
         <button
           className="mobile-menu"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle navigation"
+          aria-expanded={menuOpen}
         >
           {menuOpen ? <X /> : <Menu />}
         </button>

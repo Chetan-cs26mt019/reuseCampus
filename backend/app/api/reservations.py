@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
-from app.models import Reservation, User
+from app.models import Listing, ListingImage, Reservation, User
 from app.schemas.pagination import PaginatedResponse
 from app.schemas.reservation import (
     ReservationAction,
@@ -54,7 +54,9 @@ def list_my_reservations(
         .order_by(Reservation.created_at.desc())
     )
 
-    return paginate_items(list(db.scalars(statement).all()), page, size)
+    reservations = list(db.scalars(statement).all())
+    items = [_reservation_view(db, item) for item in reservations]
+    return paginate_items(items, page, size)
 
 
 @router.get("/{order_id}", response_model=ReservationResponse)
@@ -80,7 +82,7 @@ def get_reservation(
             detail="Reservation not found",
         )
 
-    return reservation
+    return _reservation_view(db, reservation)
 
 
 @router.patch("/{order_id}", response_model=ReservationResponse)
@@ -90,9 +92,24 @@ def update_reservation(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return change_reservation_status(
-        db=db,
-        actor=current_user,
-        reservation_id=order_id,
-        action=payload.action,
+    reservation = change_reservation_status(
+        db=db, actor=current_user, reservation_id=order_id, action=payload.action
     )
+    return _reservation_view(db, reservation)
+
+
+def _reservation_view(db: Session, reservation: Reservation) -> dict:
+    listing = db.get(Listing, reservation.listing_id)
+    buyer = db.get(User, reservation.buyer_id)
+    seller = db.get(User, reservation.seller_id)
+    image = db.scalar(select(ListingImage.image_url).where(
+        ListingImage.listing_id == reservation.listing_id
+    ).order_by(ListingImage.position).limit(1))
+    return {
+        **reservation.__dict__,
+        "listing_title": listing.title if listing else "Unavailable product",
+        "listing_price": float(listing.price) if listing else None,
+        "listing_image": image,
+        "buyer_name": buyer.full_name if buyer else "Buyer",
+        "seller_name": seller.full_name if seller else "Seller",
+    }

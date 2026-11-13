@@ -66,7 +66,8 @@ def create_reservation(
         status="requested",
     )
 
-    listing.status = "reserved"
+    # A request is pending seller approval; keep the listing visible.
+    # Active reservations prevent duplicate requests without hiding the item.
     db.add(reservation)
 
     try:
@@ -186,12 +187,6 @@ def change_reservation_status(
                     detail="Only accepted reservations can be completed",
                 )
 
-            if listing.status != "reserved":
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="Listing is not in the reserved state",
-                )
-
             from datetime import datetime
 
             reservation.status = "completed"
@@ -222,10 +217,12 @@ def _release_listing_if_no_active_reservations(
     Make the listing available again when no active reservation
     remains. Do not override a moderation or sold status.
     """
-    if listing.status != "reserved":
+    # Pending/accepted reservations do not remove the product from browse.
+    # Only completion marks it sold; rejection/cancellation leaves it available.
+    if listing.status != "available":
         return
 
-    active_id = db.scalar(
+    db.scalar(
         select(Reservation.id)
         .where(
             Reservation.listing_id == listing.id,
@@ -234,5 +231,5 @@ def _release_listing_if_no_active_reservations(
         .limit(1)
     )
 
-    if active_id is None:
-        listing.status = "available"
+    # Keep available; this helper intentionally does not hide pending items.
+    return

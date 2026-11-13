@@ -9,11 +9,12 @@ from fastapi import (
     UploadFile,
     status,
 )
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
-from app.models import User
+from app.models import Listing, User
 from app.schemas.marketplace import (
     CategoryResponse,
     ListingCreate,
@@ -80,6 +81,48 @@ def get_listings(
         condition=condition, limit=100000, offset=0,
     )
     return paginate_items(results, page, size)
+
+
+@router.get("/my/listings", response_model=PaginatedResponse[ListingResponse])
+def get_my_listings(
+    page: int = Query(default=1, ge=1),
+    size: int = Query(default=20, ge=1, le=50),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    statement = (
+        select(Listing)
+        .where(
+            Listing.seller_id == current_user.id,
+            Listing.removed_at.is_(None),
+        )
+        .order_by(Listing.created_at.desc())
+    )
+    listings = list(db.scalars(statement).all())
+    return paginate_items(listings, page, size)
+
+
+@router.delete("/listings/{listing_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_listing(
+    listing_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    from datetime import UTC, datetime
+
+    from fastapi import HTTPException
+
+    listing = db.get(Listing, listing_id)
+    if listing is None or listing.removed_at is not None:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    if listing.seller_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the seller can delete this listing")
+    if listing.status == "reserved":
+        raise HTTPException(status_code=409, detail="A reserved listing cannot be deleted")
+    listing.status = "removed"
+    listing.removed_at = datetime.now(UTC).replace(tzinfo=None)
+    db.commit()
+    return None
 
 
 @router.get("/listings/{listing_id}", response_model=ListingResponse)

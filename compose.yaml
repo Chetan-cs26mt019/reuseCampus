@@ -34,15 +34,60 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
 
   frontend:
     build:
       context: ./frontend
+    image: reusecampus-frontend:latest
     restart: unless-stopped
     ports:
-      - "3000:80"
+      - "5173:80"
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget -q -O /dev/null http://127.0.0.1/ || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  demo-info:
+    image: reusecampus-frontend:latest
+    depends_on:
+      frontend:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo ""
+        echo "========================================"
+        echo "       ReUse Campus is READY!"
+        echo "========================================"
+        echo ""
+        echo "FINAL DEMO WEBSITE:"
+        echo "http://localhost:5173"
+        echo ""
+        echo "Backend API:"
+        echo "http://localhost:8000"
+        echo ""
+        echo "API Documentation:"
+        echo "http://localhost:8000/docs"
+        echo ""
+        echo "========================================"
+    restart: "no"
 
 volumes:
   mysql_data:

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { apiRequest } from '../../services/apiClient'
+import { apiRequest } from '../../services/api'
 
 const reasons = [
   'spam', 'fraud', 'prohibited_item',
