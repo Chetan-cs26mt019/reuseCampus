@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -13,8 +13,8 @@ from app.schemas.enquiry import (
 )
 from app.schemas.pagination import PaginatedResponse
 from app.services.enquiries import (
-    create_enquiry,
     get_enquiry_for_participant,
+    get_or_create_enquiry,
     list_enquiry_messages,
     list_my_enquiries,
     send_enquiry_message,
@@ -34,12 +34,16 @@ router = APIRouter(
 )
 def create_enquiry_endpoint(
     payload: EnquiryCreate,
+    response: Response,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return create_enquiry(
+    enquiry, created = get_or_create_enquiry(
         db, current_user, payload.listing_id
     )
+    if not created:
+        response.status_code = status.HTTP_200_OK
+    return _enquiry_view(db, enquiry)
 
 
 @router.get("", response_model=PaginatedResponse[EnquiryResponse])
@@ -114,6 +118,6 @@ def _enquiry_view(db: Session, enquiry: Enquiry) -> dict:
         "listing_title": listing.title if listing else "Unavailable product",
         "listing_price": float(listing.price) if listing else None,
         "listing_image": image,
-        "buyer_name": buyer.full_name if buyer else "Buyer",
-        "seller_name": seller.full_name if seller else "Seller",
+        "buyer_name": (buyer.full_name or buyer.username) if buyer else "Buyer",
+        "seller_name": (seller.full_name or seller.username) if seller else "Seller",
     }

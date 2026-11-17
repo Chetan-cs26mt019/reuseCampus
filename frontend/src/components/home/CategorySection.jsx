@@ -4,20 +4,26 @@ import {
   Laptop,
   Armchair,
   Shirt,
-  Dumbbell,
+  Pencil,
   Package,
+
 } from 'lucide-react'
 import { apiGet, getItems } from '../../services/api'
 
-const icons = [BookOpen, Laptop, Armchair, Shirt, Dumbbell, Package]
+const icons = {
+  Books: BookOpen,
+  Electronics: Laptop,
+  Furniture: Armchair,
+  Clothing: Shirt,
+  Stationery: Pencil,
+}
 
 const fallbackCategories = [
   { id: 1, name: 'Books' },
   { id: 2, name: 'Electronics' },
   { id: 3, name: 'Furniture' },
   { id: 4, name: 'Clothing' },
-  { id: 5, name: 'Sports' },
-  { id: 6, name: 'Others' },
+  { id: 5, name: 'Stationery' },
 ]
 
 export default function CategorySection() {
@@ -45,7 +51,7 @@ export default function CategorySection() {
 
       <div className="category-grid">
         {categories.map((category, index) => {
-          const Icon = icons[index % icons.length]
+          const Icon = icons[category.name] || Package
 
           return (
             <a

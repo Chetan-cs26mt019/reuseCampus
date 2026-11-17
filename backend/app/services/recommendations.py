@@ -8,7 +8,9 @@ from app.models import (
     Category,
     Favourite,
     Listing,
+    ListingView,
     Reservation,
+    SearchHistory,
 )
 from app.services.embedding_model import (
     MODEL_NAME,
@@ -182,12 +184,9 @@ def personalized_recommendations(
 ):
     favourite_ids = list(
         db.scalars(
-            select(Favourite.listing_id).where(
-                Favourite.user_id == user_id
-            )
+            select(Favourite.listing_id).where(Favourite.user_id == user_id)
         ).all()
     )
-
     completed_ids = list(
         db.scalars(
             select(Reservation.listing_id).where(
@@ -196,53 +195,80 @@ def personalized_recommendations(
             )
         ).all()
     )
+    view_rows = list(
+        db.scalars(
+            select(ListingView)
+            .where(ListingView.user_id == user_id)
+            .order_by(ListingView.last_viewed_at.desc())
+            .limit(30)
+        ).all()
+    )
+    viewed_ids = [row.listing_id for row in view_rows]
+    view_counts = {row.listing_id: row.view_count for row in view_rows}
+    searches = list(
+        db.scalars(
+            select(SearchHistory)
+            .where(SearchHistory.user_id == user_id)
+            .order_by(SearchHistory.last_searched_at.desc())
+            .limit(20)
+        ).all()
+    )
 
-    interest_ids = list(dict.fromkeys(favourite_ids + completed_ids))
+    # Repeated views/searches contribute a stronger signal, while duplicate
+    # listing IDs are embedded only once to keep profile construction stable.
+    interest_ids = list(dict.fromkeys(favourite_ids + completed_ids + viewed_ids))
+    interest_listings = []
+    if interest_ids:
+        interest_listings = db.scalars(
+            select(Listing).where(Listing.id.in_(interest_ids))
+        ).all()
 
-    if not interest_ids:
-        return popular_recommendations(
-            db,
-            limit=limit,
-            exclude_seller_id=user_id,
+    weighted_vectors: list[tuple[list[float], float]] = []
+    for item in interest_listings:
+        vector = get_listing_embedding(db, item)
+        weight = 4.0 if item.id in completed_ids else (
+            3.0 if item.id in favourite_ids else 2.0
         )
+        if item.id in viewed_ids:
+            weight += min(2.0, 0.25 * view_counts.get(item.id, 1))
+        weighted_vectors.append((vector, weight))
 
-    interests = db.scalars(
-        select(Listing).where(Listing.id.in_(interest_ids))
-    ).all()
+    # Search terms are converted into the same semantic vector space as
+    # listing descriptions and act as a lightweight expression of intent.
+    for search in searches:
+        try:
+            vector = make_embedding(f"Campus marketplace search: {search.normalized_query}")
+        except Exception:
+            continue
+        weighted_vectors.append((vector, min(3.0, 1.0 + 0.25 * search.search_count)))
 
-    if not interests:
-        return popular_recommendations(
-            db,
-            limit=limit,
-            exclude_seller_id=user_id,
-        )
+    if not weighted_vectors:
+        return []
 
-    vectors = [get_listing_embedding(db, item) for item in interests]
-
-    # All vectors in a profile must come from the same embedding space.
-    dimension = len(vectors[0])
-    if any(len(vector) != dimension for vector in vectors):
+    dimension = len(weighted_vectors[0][0])
+    if any(len(vector) != dimension for vector, _ in weighted_vectors):
         raise ValueError("Inconsistent embedding dimensions in user profile.")
 
+    total_weight = sum(weight for _, weight in weighted_vectors)
     profile = [
-        sum(vector[index] for vector in vectors) / len(vectors)
+        sum(vector[index] * weight for vector, weight in weighted_vectors) / total_weight
         for index in range(dimension)
     ]
 
     candidates = available_listings(db, exclude_seller_id=user_id)
     results = []
+    excluded_ids = set(interest_ids)
 
     for candidate in candidates:
-        if candidate.id in interest_ids:
+        if candidate.id in excluded_ids:
             continue
 
         vector = get_listing_embedding(db, candidate)
         score = cosine_similarity(profile, vector)
-
         results.append({
             "listing": candidate,
             "score": score,
-            "reason": "Based on your favourites and completed reservations",
+            "reason": "Based on your searches, viewed listings, favourites and completed reservations",
         })
 
     results.sort(key=lambda item: item["score"], reverse=True)

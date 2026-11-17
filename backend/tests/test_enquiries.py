@@ -5,7 +5,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.db.base import Base
-from app.models import Category, EnquiryMessage, Listing, User
+from app.models import Category, Enquiry, EnquiryMessage, Listing, User
+from app.schemas.enquiry import EnquiryResponse
 from app.services.enquiries import (
     create_enquiry,
     get_enquiry_for_participant,
@@ -156,3 +157,49 @@ def test_message_sender_is_authenticated_user(
         )
 
     assert error.value.status_code == 404
+
+
+def test_reopening_same_listing_returns_existing_enquiry(
+    db, setup_users_and_listing
+):
+    _seller, buyer, _outsider, listing = setup_users_and_listing
+
+    first = create_enquiry(db, buyer, listing.id)
+    second = create_enquiry(db, buyer, listing.id)
+
+    assert first.id == second.id
+    assert db.query(Enquiry).filter_by(
+        listing_id=listing.id, buyer_id=buyer.id
+    ).count() == 1
+
+
+def test_existing_enquiry_is_returned_even_if_listing_is_no_longer_available(
+    db, setup_users_and_listing
+):
+    _seller, buyer, _outsider, listing = setup_users_and_listing
+    first = create_enquiry(db, buyer, listing.id)
+    listing.status = "reserved"
+    db.commit()
+
+    second = create_enquiry(db, buyer, listing.id)
+
+    assert second.id == first.id
+
+
+
+def test_enquiry_response_includes_buyer_seller_and_product_names(
+    db, setup_users_and_listing
+):
+    seller, buyer, _outsider, listing = setup_users_and_listing
+    enquiry = create_enquiry(db, buyer, listing.id)
+
+    response = EnquiryResponse.model_validate({
+        **enquiry.__dict__,
+        "buyer_name": buyer.full_name,
+        "seller_name": seller.full_name,
+        "listing_title": listing.title,
+    })
+
+    assert response.buyer_name == buyer.full_name
+    assert response.seller_name == seller.full_name
+    assert response.listing_title == listing.title

@@ -14,11 +14,14 @@ export default function Marketplace() {
   )
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
-  const [filters, setFilters] = useState({
-    query: '',
-    categoryId: '',
-    minPrice: '',
-    maxPrice: '',
+  const [filters, setFilters] = useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    return {
+      query: params.get('q') || '',
+      categoryId: params.get('category') || '',
+      minPrice: params.get('min_price') || '',
+      maxPrice: params.get('max_price') || '',
+    }
   })
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)

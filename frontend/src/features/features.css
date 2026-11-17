@@ -80,3 +80,42 @@
 .product-thumb-placeholder { display: inline-flex; align-items: center; justify-content: center; background: #f2f0fa; font-size: 24px; }
 .reservation-product { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
 .reservation-product p { margin: 5px 0; }
+
+
+.feature-actions button.active {
+  background: #35209f;
+  box-shadow: 0 4px 12px #573dd133;
+}
+
+.similar-items-section {
+  margin-top: 52px;
+}
+
+.similar-items-section .section-heading {
+  margin-bottom: 22px;
+}
+
+.product-info > p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  min-height: 18px;
+}
+
+
+.moderation-report-card { display: grid; gap: 10px; }
+.moderation-report-card .reservation-product { align-items: flex-start; }
+.moderation-report-card .reservation-product img,
+.moderation-report-card .reservation-product .product-thumb-placeholder { width: 104px; height: 104px; flex-basis: 104px; }
+.moderation-report-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.moderation-status { display: inline-block; border-radius: 999px; padding: 5px 10px; font-size: 12px; text-transform: capitalize; background: #f1efff; color: var(--purple); }
+.moderation-status-closed { background: #e8f7ee; color: #187344; }
+.moderation-status-open { background: #fff4df; color: #8a5700; }
+.moderation-report-card > p { margin: 2px 0; }
+
+.moderation-decision-panel { display: grid; gap: 10px; padding: 14px; border: 1px solid #e8e5f2; border-radius: 12px; background: #faf9ff; }
+.moderation-danger-button { background: #a72828 !important; color: #fff !important; }
+.moderation-history { border-top: 1px solid #eceaf2; padding-top: 12px; margin-top: 4px; }
+.moderation-history ol { margin: 10px 0 0; padding-left: 22px; display: grid; gap: 10px; }
+.moderation-history li p { margin: 4px 0; color: #696579; }
+.moderation-history li span { color: #777; font-size: 12px; }

@@ -1,17 +1,6 @@
-import { ArrowRight, Search, Sparkles } from 'lucide-react'
-import { useState } from 'react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 
 export default function Hero() {
-  const [search, setSearch] = useState('')
-
-  function handleSearch(event) {
-    event.preventDefault()
-
-    if (!search.trim()) return
-
-    window.location.href = `/browse?q=${encodeURIComponent(search)}`
-  }
-
   return (
     <section className="hero">
       <div className="hero-content">
@@ -32,18 +21,9 @@ export default function Hero() {
           a sustainable community.
         </p>
 
-        <form className="hero-search" onSubmit={handleSearch}>
-          <Search size={21} />
-          <input
-            type="search"
-            placeholder="What are you looking for?"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-          <button type="submit">
-            Search <ArrowRight size={17} />
-          </button>
-        </form>
+        <a className="hero-cta" href="/browse">
+          View Products <ArrowRight size={18} />
+        </a>
 
         <div className="hero-stats">
           <div><strong>Buy</strong><span>Affordable finds</span></div>

@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
+import { Package } from 'lucide-react'
 import { apiGet, apiRequest, getItems } from '../services/api'
 
 export default function ListingDetails({ listingId }) {
   const [listing, setListing] = useState(null)
   const [images, setImages] = useState([])
+  const [similarItems, setSimilarItems] = useState([])
+  const [similarLoading, setSimilarLoading] = useState(false)
   const [error, setError] = useState('')
   const [reportReason, setReportReason] = useState('spam')
   const [reportDetails, setReportDetails] = useState('')
@@ -19,6 +22,34 @@ export default function ListingDetails({ listingId }) {
       setListing(item)
       setImages(getItems(imageData))
     }).catch((err) => setError(err.message))
+  }, [listingId])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadSimilarItems() {
+      setSimilarLoading(true)
+      try {
+        const data = await apiGet(`/recommendations/similar/${listingId}`)
+        const items = getItems(data)
+        const withImages = await Promise.all(items.map(async (item) => {
+          try {
+            const imageData = await apiGet(`/listings/${item.id}/images`)
+            return { ...item, image_url: getItems(imageData)[0]?.image_url || null }
+          } catch {
+            return { ...item, image_url: null }
+          }
+        }))
+        if (!cancelled) setSimilarItems(withImages.slice(0, 4))
+      } catch {
+        if (!cancelled) setSimilarItems([])
+      } finally {
+        if (!cancelled) setSimilarLoading(false)
+      }
+    }
+
+    loadSimilarItems()
+    return () => { cancelled = true }
   }, [listingId])
 
   async function enquire() {
@@ -98,6 +129,44 @@ export default function ListingDetails({ listingId }) {
           <p><a href="/browse">← Back to marketplace</a></p>
         </div>
       </div>
+
+      <section className="similar-items-section">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">MORE TO EXPLORE</span>
+            <h2>You May Also Like</h2>
+            <p>Items with similar descriptions and categories.</p>
+          </div>
+        </div>
+
+        {similarLoading && <p className="section-message">Finding similar items...</p>}
+        {!similarLoading && similarItems.length === 0 && (
+          <p className="section-message">No similar items are available yet.</p>
+        )}
+        {!similarLoading && similarItems.length > 0 && (
+          <div className="product-grid">
+            {similarItems.map((item) => (
+              <article className="product-card" key={item.id}>
+                <a href={`/listings/${item.id}`} className="product-image">
+                  {item.image_url
+                    ? <img src={item.image_url} alt={item.title} />
+                    : <Package className="product-placeholder-icon" />}
+                  <span className="condition-tag">{item.condition || 'Pre-loved'}</span>
+                </a>
+                <div className="product-info">
+                  <h3>{item.title}</h3>
+                  <strong className="product-price">
+                    ₹{Number(item.price || 0).toLocaleString('en-IN')}
+                  </strong>
+                  <a className="product-link" href={`/listings/${item.id}`}>
+                    View details →
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </section>
   )
 }
