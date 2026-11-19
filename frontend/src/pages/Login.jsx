@@ -2,6 +2,12 @@ import { useState } from 'react'
 import { apiRequest } from '../services/api'
 
 export default function Login() {
+  const requestedNext = new URLSearchParams(window.location.search).get('next')
+  const safeNext = requestedNext && requestedNext.startsWith('/')
+    && !requestedNext.startsWith('//')
+    && !requestedNext.includes('\\')
+    ? requestedNext
+    : '/browse'
   const [form, setForm] = useState({ username_or_email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,7 +24,7 @@ export default function Login() {
       })
       localStorage.setItem('access_token', result.access_token)
       localStorage.setItem('current_user', JSON.stringify(result.user))
-      window.location.href = '/browse'
+      window.location.href = safeNext
     } catch (err) {
       setError(err.message)
     } finally {

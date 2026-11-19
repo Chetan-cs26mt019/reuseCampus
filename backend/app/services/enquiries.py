@@ -5,19 +5,25 @@ from sqlalchemy.orm import Session
 from app.models import Enquiry, EnquiryMessage, Listing, User
 
 
-def create_enquiry(
+def get_or_create_enquiry(
     db: Session,
     buyer: User,
     listing_id: int,
-) -> Enquiry:
+) -> tuple[Enquiry, bool]:
+    """Return the buyer's existing thread for a listing, or create one.
+
+    The boolean is True only when a new enquiry was inserted.
+    Existing threads are returned even if the listing is no longer available,
+    so the buyer can continue to access the conversation already started.
+    """
     listing = db.scalar(
         select(Listing).where(Listing.id == listing_id)
     )
 
-    if listing is None or listing.status != "available":
+    if listing is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Available listing not found",
+            detail="Listing not found",
         )
 
     if listing.seller_id == buyer.id:
@@ -26,13 +32,29 @@ def create_enquiry(
             detail="You cannot enquire about your own listing",
         )
 
+    existing = db.scalar(
+        select(Enquiry)
+        .where(
+            Enquiry.listing_id == listing.id,
+            Enquiry.buyer_id == buyer.id,
+        )
+        .order_by(Enquiry.created_at.asc(), Enquiry.id.asc())
+    )
+    if existing is not None:
+        return existing, False
+
+    if listing.status != "available":
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Available listing not found",
+        )
+
     enquiry = Enquiry(
         listing_id=listing.id,
         buyer_id=buyer.id,
         seller_id=listing.seller_id,
         status="open",
     )
-
     db.add(enquiry)
 
     try:
@@ -40,8 +62,30 @@ def create_enquiry(
         db.refresh(enquiry)
     except Exception:
         db.rollback()
+        # A second request may have created the same thread concurrently.
+        # Re-read it before surfacing the database error.
+        existing = db.scalar(
+            select(Enquiry)
+            .where(
+                Enquiry.listing_id == listing.id,
+                Enquiry.buyer_id == buyer.id,
+            )
+            .order_by(Enquiry.created_at.asc(), Enquiry.id.asc())
+        )
+        if existing is not None:
+            return existing, False
         raise
 
+    return enquiry, True
+
+
+def create_enquiry(
+    db: Session,
+    buyer: User,
+    listing_id: int,
+) -> Enquiry:
+    """Compatibility wrapper used by service callers and tests."""
+    enquiry, _created = get_or_create_enquiry(db, buyer, listing_id)
     return enquiry
 
 

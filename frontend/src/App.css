@@ -51,9 +51,45 @@
   font-weight: 600;
 }
 
+.nav-links {
+  gap: 12px;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.nav-links a,
+.login-link {
+  border-radius: 9px;
+  transition: color 0.18s ease, background 0.18s ease;
+}
+
+.nav-links a {
+  padding: 8px 9px;
+}
+
+.nav-links .mobile-only-nav-link {
+  display: none;
+}
+
 .nav-links a:hover,
 .login-link:hover {
   color: var(--purple);
+  background: #f5f2ff;
+}
+
+.nav-links a.active,
+.login-link.active {
+  color: var(--purple);
+  background: #eee9ff;
+  font-weight: 700;
+}
+
+.brand-active .brand-icon {
+  box-shadow: 0 0 0 3px #eee9ff;
+}
+
+.signup-button.active {
+  box-shadow: 0 0 0 3px #dcd3ff;
 }
 
 .nav-search {
@@ -162,33 +198,25 @@
   font-size: 15px;
 }
 
-.hero-search {
-  max-width: 510px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: white;
-  color: #747c8e;
-  padding: 8px 9px 8px 17px;
-  border-radius: 13px;
+.hero-cta {
+  width: fit-content;
   margin-top: 27px;
-}
-
-.hero-search input {
-  padding: 10px 0;
-}
-
-.hero-search button {
-  border: 0;
-  border-radius: 9px;
-  padding: 12px 17px;
+  padding: 14px 22px;
+  border-radius: 12px;
   color: white;
   background: var(--purple);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  font-weight: 600;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.hero-cta:hover {
+  background: #4229b6;
+  transform: translateY(-2px);
 }
 
 .hero-stats {
@@ -575,7 +603,7 @@
 
 /* RESPONSIVE */
 @media (max-width: 1050px) {
-  .nav-links { gap: 13px; }
+  .nav-links { gap: 5px; font-size: 11.5px; }
   .nav-search { min-width: 150px; }
   .hero { margin-left: 20px; margin-right: 20px; padding: 50px 35px; }
   .category-grid { grid-template-columns: repeat(3, 1fr); }
@@ -595,7 +623,7 @@
     align-items: flex-start;
     box-shadow: 0 10px 20px #00000010;
   }
-  .nav-links.nav-open { display: flex; }
+  .nav-links.nav-open { display: flex; }\n  .nav-links .mobile-only-nav-link { display: block; }
   .nav-search, .nav-actions { display: none; }
   .mobile-menu { display: block; }
   .hero {
@@ -618,8 +646,7 @@
 @media (max-width: 440px) {
   .brand { font-size: 17px; }
   .hero h1 { font-size: 40px; }
-  .hero-search { gap: 7px; padding-left: 10px; }
-  .hero-search button { padding: 11px; }
+  .hero-cta { padding: 12px 18px; }
   .hero-stats { gap: 12px; }
   .hero-stats span { font-size: 9px; }
   .section-heading h2 { font-size: 24px; }

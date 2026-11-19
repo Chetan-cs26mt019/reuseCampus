@@ -12,12 +12,22 @@ export default function CreateListing() {
   })
   const [image, setImage] = useState(null)
   const [error, setError] = useState('')
+  const authorized = Boolean(localStorage.getItem('access_token'))
 
   useEffect(() => {
+    if (!authorized) {
+      window.location.replace('/login?next=%2Flistings%2Fnew')
+      return
+    }
+
     apiGet('/categories')
       .then((data) => setCategories(getItems(data)))
       .catch((err) => setError(err.message))
-  }, [])
+  }, [authorized])
+
+  if (!authorized) {
+    return <p className="section-message">Checking your sign-in status...</p>
+  }
 
   async function submit(event) {
     event.preventDefault()

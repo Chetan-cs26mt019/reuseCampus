@@ -9,6 +9,8 @@ from app.models import (
     Category,
     Favourite,
     Listing,
+    ListingView,
+    SearchHistory,
     User,
 )
 from app.services import recommendations as service
@@ -138,13 +140,12 @@ def test_personalized_recommendations_use_favourites(db, marketplace):
     assert all(item["listing"].id != source.id for item in results)
 
 
-def test_new_user_gets_popular_fallback(db, marketplace):
+def test_new_user_gets_empty_personalized_results(db, marketplace):
     buyer, _, _, _, _ = marketplace
 
     results = service.personalized_recommendations(db, buyer.id)
 
-    assert results
-    assert all(item["reason"] == "Popular among campus users" for item in results)
+    assert results == []
 
 
 def test_embedding_is_cached(db, marketplace, monkeypatch):
@@ -164,3 +165,37 @@ def test_embedding_is_cached(db, marketplace, monkeypatch):
     assert first == second
     assert calls["count"] == 1
     assert db.query(AIEmbedding).filter_by(listing_id=source.id).count() == 1
+
+
+
+def test_personalized_recommendations_use_listing_views(db, marketplace):
+    buyer, _, source, _, other_seller = marketplace
+    db.add(ListingView(
+        user_id=buyer.id,
+        listing_id=source.id,
+        view_count=2,
+    ))
+    db.commit()
+
+    results = service.personalized_recommendations(db, buyer.id)
+
+    assert results
+    assert all(item["listing"].id != source.id for item in results)
+
+
+def test_personalized_recommendations_use_search_history(db, marketplace):
+    buyer, _, _, _, _ = marketplace
+    db.add(SearchHistory(
+        user_id=buyer.id,
+        normalized_query="calculator",
+        search_count=2,
+    ))
+    db.commit()
+
+    results = service.personalized_recommendations(db, buyer.id)
+
+    assert results
+    assert all(
+        "searches" in item["reason"]
+        for item in results
+    )

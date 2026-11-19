@@ -189,7 +189,7 @@ class Reservation(Base):
 class Enquiry(Base):
     __tablename__ = "enquiries"
     __table_args__ = (
-        Index("ix_enquiries_listing_buyer", "listing_id", "buyer_id"),
+        UniqueConstraint("listing_id", "buyer_id", name="uq_enquiries_listing_buyer"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -265,6 +265,10 @@ class Report(Base):
         DateTime, nullable=False, server_default=func.now()
     )
     reviewed_at: Mapped[DateTime | None] = mapped_column(DateTime)
+    closed_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL")
+    )
+    closed_at: Mapped[DateTime | None] = mapped_column(DateTime)
 
     @property
     def reviewer_id(self):
@@ -323,4 +327,49 @@ class AIEmbedding(Base):
     )
     is_current: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=True
+    )
+
+
+# ============================================================
+# PERSONALIZATION ACTIVITY
+# ============================================================
+
+class SearchHistory(Base):
+    __tablename__ = "search_history"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id", "normalized_query", name="uq_search_history_user_query"
+        ),
+        Index("ix_search_history_user_recent", "user_id", "last_searched_at"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    normalized_query: Mapped[str] = mapped_column(String(200), nullable=False)
+    search_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    last_searched_at: Mapped[DateTime] = mapped_column(
+        DateTime, nullable=False, server_default=func.now()
+    )
+
+
+class ListingView(Base):
+    __tablename__ = "listing_views"
+    __table_args__ = (
+        Index("ix_listing_views_user_recent", "user_id", "last_viewed_at"),
+    )
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    listing_id: Mapped[int] = mapped_column(
+        ForeignKey("listings.id", ondelete="CASCADE"), primary_key=True
+    )
+    view_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    first_viewed_at: Mapped[DateTime] = mapped_column(
+        DateTime, nullable=False, server_default=func.now()
+    )
+    last_viewed_at: Mapped[DateTime] = mapped_column(
+        DateTime, nullable=False, server_default=func.now()
     )

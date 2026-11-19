@@ -12,7 +12,7 @@ from fastapi import (
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, get_optional_current_user
 from app.db.session import get_db
 from app.models import Listing, User
 from app.schemas.marketplace import (
@@ -74,12 +74,17 @@ def get_listings(
     page: int = Query(default=1, ge=1),
     size: int = Query(default=20, ge=1, le=50),
     db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_current_user),
 ):
     results = search_listings(
         db, q=q, category_id=category_id,
         min_price=min_price, max_price=max_price,
         condition=condition, limit=100000, offset=0,
     )
+    if current_user is not None and q and q.strip():
+        from app.services.activity import record_search
+
+        record_search(db, current_user.id, q)
     return paginate_items(results, page, size)
 
 
@@ -129,8 +134,14 @@ def delete_listing(
 def get_listing_details(
     listing_id: int,
     db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_current_user),
 ):
-    return get_listing(db, listing_id)
+    listing = get_listing(db, listing_id)
+    if current_user is not None and current_user.id != listing.seller_id:
+        from app.services.activity import record_listing_view
+
+        record_listing_view(db, current_user.id, listing.id)
+    return listing
 
 
 @router.patch(

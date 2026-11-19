@@ -1,4 +1,4 @@
-import { ShoppingBag, Mail } from 'lucide-react'
+import { ShoppingBag } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -9,33 +9,39 @@ export default function Footer() {
             <span className="brand-icon"><ShoppingBag size={22} /></span>
             <span>ReUse<span className="brand-highlight">Campus</span></span>
           </a>
-          <p>A smarter, more sustainable marketplace for campus communities.</p>
+          <p>
+            A student-powered marketplace to buy, sell and reuse
+            useful items within the campus community.
+          </p>
         </div>
 
         <div className="footer-column">
           <h4>Marketplace</h4>
           <a href="/browse">Browse products</a>
-          <a href="#categories">Categories</a>
-          <a href="#trending">Trending items</a>
+          <a href="/#categories">Explore categories</a>
+          <a href="/#trending">Popular products</a>
+          <a href="/listings/new">Sell an item</a>
         </div>
 
         <div className="footer-column">
-          <h4>Community</h4>
+          <h4>My Account</h4>
+          <a href="/profile">My profile</a>
+          <a href="/my-listings">My listings</a>
+          <a href="/wishlist">My wishlist</a>
+          <a href="/orders">My orders</a>
+          <a href="/enquiries">My enquiries</a>
+        </div>
+
+        <div className="footer-column">
+          <h4>Discover</h4>
           <a href="/recommendations">Recommendations</a>
-          <a href="/login">My account</a>
-          <a href="/signup">Join us</a>
-        </div>
-
-        <div className="footer-column">
-          <h4>Connect</h4>
-          <a href="mailto:support@reusecampus.example">
-            <Mail size={16} /> Email us
-          </a>
+          <a href="/login">Sign in</a>
+          <a href="/signup">Create account</a>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <span>© {new Date().getFullYear()} ReUseCampus. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} ReUse Campus. All rights reserved.</span>
         <span>Reuse more. Waste less. 🌱</span>
       </div>
     </footer>

@@ -5,12 +5,14 @@ from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models import User
 from app.schemas.moderation import (
+    ReportClose,
     ReportCreate,
     ReportResponse,
     ReportReview,
 )
 from app.schemas.pagination import PaginatedResponse
 from app.services.moderation import (
+    close_report,
     create_report,
     list_reports,
     review_report,
@@ -77,3 +79,13 @@ def review_report_endpoint(
         payload.action,
         payload.reason,
     )
+
+
+@moderation_router.patch("/reports/{report_id}/close", response_model=ReportResponse)
+def close_report_endpoint(
+    report_id: int,
+    payload: ReportClose,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return close_report(db, current_user, report_id, payload.reason)

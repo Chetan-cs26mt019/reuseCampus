@@ -33,3 +33,8 @@ class EnquiryResponse(BaseModel):
     status: str
     created_at: datetime
     updated_at: datetime
+    listing_title: str | None = None
+    listing_price: float | None = None
+    listing_image: str | None = None
+    buyer_name: str | None = None
+    seller_name: str | None = None
